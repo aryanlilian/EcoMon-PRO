@@ -5,14 +5,13 @@ from django.http import JsonResponse
 
 
 def incomes_chart_area_data(request):
-    incomes_data = []
+    incomes_data, date_distance, checks = [], None, 12
     first_income = Income.objects.filter(user=request.user).first()
     last_income = Income.objects.filter(user=request.user).last()
-    date_distance = None
     if first_income and last_income:
         date_distance = last_income.created_date - first_income.created_date
     if date_distance and date_distance.days <= 365:
-        year, month, checks = first_income.created_date.year, first_income.created_date.month, 12
+        year, month = first_income.created_date.year, first_income.created_date.month
         while checks:
             date = datetime(year, month, 1)
             if month == 12:
@@ -26,8 +25,21 @@ def incomes_chart_area_data(request):
                 month += 1
             checks -= 1
     elif date_distance:
-        year, month, checks = last_income.created_date.year - \
-            1, last_income.created_date.month + 1, 12
+        year, month = last_income.created_date.year - 1, last_income.created_date.month + 1
+        while checks:
+            date = datetime(year, month, 1)
+            if month == 12:
+                incomes = Income.objects.filter(user=request.user, created_date__year=year, created_date__month=month)
+                incomes_data.append({date.strftime('%b'): assembly(incomes)})
+                month = 1
+                year += 1
+            else:
+                incomes = Income.objects.filter(user=request.user, created_date__year=year, created_date__month=month)
+                incomes_data.append({date.strftime('%b'): assembly(incomes)})
+                month += 1
+            checks -= 1
+    else:
+        year, month = first_income.created_date.year, first_income.created_date.month
         while checks:
             date = datetime(year, month, 1)
             if month == 12:
@@ -44,14 +56,13 @@ def incomes_chart_area_data(request):
 
 
 def spendings_chart_area_data(request):
-    spendings_data = []
+    spendings_data, date_distance, checks = [], None, 12
     first_spending = Spending.objects.filter(user=request.user).first()
     last_spending = Spending.objects.filter(user=request.user).last()
-    date_distance = None
     if first_spending and last_spending:
         date_distance = last_spending.created_date - first_spending.created_date
     if date_distance and date_distance.days <= 365:
-        year, month, checks = first_spending.created_date.year, first_spending.created_date.month, 12
+        year, month = first_spending.created_date.year, first_spending.created_date.month
         while checks:
             date = datetime(year, month, 1)
             if month == 12:
@@ -65,8 +76,21 @@ def spendings_chart_area_data(request):
                 month += 1
             checks -= 1
     elif date_distance:
-        year, month, checks = last_spending.created_date.year - \
-            1, last_spending.created_date.month + 1, 12
+        year, month = last_spending.created_date.year - 1, last_spending.created_date.month + 1
+        while checks:
+            date = datetime(year, month, 1)
+            if month == 12:
+                spendings = Spending.objects.filter(user=request.user, created_date__year=year, created_date__month=month)
+                spendings_data.append({date.strftime('%b'): assembly(spendings)})
+                month = 1
+                year += 1
+            else:
+                spendings = Spending.objects.filter(user=request.user, created_date__year=year, created_date__month=month)
+                spendings_data.append({date.strftime('%b'): assembly(spendings)})
+                month += 1
+            checks -= 1
+    else:
+        year, month = first_spending.created_date.year, first_spending.created_date.month
         while checks:
             date = datetime(year, month, 1)
             if month == 12:
