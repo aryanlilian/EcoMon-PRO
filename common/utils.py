@@ -69,5 +69,5 @@ def uidb_token_generator(link, request, token=None):
         relatively_url = reverse(
             link, kwargs={'uidb64' : uidb64}
         )
-    activate_url = 'http://eco-mon.herokuapp.com' + relatively_url
+    activate_url = 'https://eco-mon.herokuapp.com' + relatively_url
     return activate_url

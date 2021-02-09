@@ -29,25 +29,25 @@
 	   		        <div class="row">
 	   	        	  <div class="col-sm-12">
 	   		            <div class="form-group">
-	   		              <input class="form-control" name="email" id="email" type="email" placeholder="Enter email address" {% if not user.email_verified %}readonly{% endif %} required>
+	   		              <input class="form-control" name="email" id="email" type="email" placeholder="Enter email address">
 						  <small class="text-xs font-weight text-secondary">{{ comment_email }}</small>
 						</div>
 	   		          </div>
 	   		          <div class="col-12">
 	   		            <div class="form-group">
-	   		              <input class="form-control" name="subject" id="subject" type="text" placeholder="Enter Subject" {% if not user.email_verified %}readonly{% endif %} required>
+	   		              <input class="form-control" name="subject" id="subject" type="text" placeholder="Enter Subject">
 						  <small class="text-xs font-weight text-secondary">{{ comment_any_character }}</small>
 						</div>
 	   		          </div>
 	   		          <div class="col-12">
 	   		            <div class="form-group">
-	   		                <textarea class="form-control w-100" name="message" id="message" cols="30" rows="9" placeholder="Enter Message" {% if not user.email_verified %}readonly{% endif %} required></textarea>
+	   		                <textarea class="form-control w-100" name="message" id="message" cols="30" rows="9" placeholder="Enter Message"></textarea>
 							<small class="text-xs font-weight text-secondary">{{ comment_any_character }}</small>
 						</div>
 	   		          </div>
 		   		        </div>
 		   		        <div class="form-group mt-lg-3">
-		   		          <button type="submit" class="button button-contactForm" {% if not user.email_verified %}disabled{% endif %}>Send Message</button>
+		   		          <button type="submit" class="button button-contactForm">Send Message</button>
 		   		        </div>
 	   		      	</form>
 				  </div>

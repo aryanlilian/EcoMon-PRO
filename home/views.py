@@ -150,7 +150,7 @@ class ContactView(View):
         return context
 
 
-class NewsletterUnsubscribeView(IsAuthenticatedMixin, View):
+class NewsletterUnsubscribeView(View):
 
     def get(self, request, uidb64):
         try:
