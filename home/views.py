@@ -103,7 +103,7 @@ class ContactView(View):
         email = request.POST.get('newsletter_email')
         if Newsletter.objects.filter(email=email).exists():
             messages.warning(request, messages_text['email_exists'])
-        else:
+        elif not subject and not message and not from_email:
             fin, newsletter_email_content = open('common/emails/newsletter_welcome.txt', 'rt'), ''
             unsubsribe_url = uidb_token_generator('unsubsribe', request, email)
             for line in fin:
@@ -123,7 +123,7 @@ class ContactView(View):
             except:
                 messages.warning(request, messages_text['fail_sent_email'])
             return redirect('contact')
-        if subject and message and from_email and not email:
+        elif subject and message and from_email and not email:
             try:
                 send_mail(
                     subject,

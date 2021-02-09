@@ -103,7 +103,7 @@ class ProfileUpdateForm(forms.ModelForm):
                     error_messages['profile_image_height'] % height,
                     code='image_invalid_height'
                 )
-        return full_image
+        return image
 
     class Meta:
         model = Profile
