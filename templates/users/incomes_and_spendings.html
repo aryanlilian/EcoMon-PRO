@@ -1,0 +1,174 @@
+{% extends 'users/base.html' %}
+{% load widget_tweaks %}
+{% block content %}
+	<div class="container">
+		<form id="form-center" action="" method="POST">
+			{% csrf_token %}
+			<div class="form-row">
+				<div class="form-group col-md-4">
+					{% if not user.email_verified %}
+						{% render_field form.name class="form-control" placeholder=form.name.label readonly=True %}
+					{% else %}
+						{% render_field form.name class="form-control" placeholder=form.name.label %}
+					{% endif %}
+					<small class="text-xs font-weight text-secondary">{{ form.name.help_text }}</small>
+			    </div>
+			    <div class="form-group col-md-4">
+					{% if not user.email_verified %}
+						{% render_field form.amount class="form-control" placeholder=form.amount.label readonly=True %}
+					{% else %}
+						{% render_field form.amount class="form-control" placeholder=form.amount.label %}
+					{% endif %}
+					<small class="text-xs font-weight text-secondary">{{ form.amount.help_text }}</small>
+			    </div>
+			    <div class="form-group col-md-2">
+					{% if not user.email_verified %}
+						{% render_field form.category class="form-control" disabled=True %}
+					{% else %}
+						{% render_field form.category class="form-control" %}
+					{% endif %}
+					<small class="text-xs font-weight text-secondary">{{ form.category.help_text }}</small>
+			    </div>
+			    <div class="form-group col-md-2">
+					<div class="custom-control custom-checkbox small">
+						{% if not user.email_verified %}
+							{% render_field form.recurrent class="custom-control-input" id="recurrentObject" disabled=True %}
+						{% else %}
+							{% render_field form.recurrent class="custom-control-input" id="recurrentObject" %}
+						{% endif %}
+						<label class="custom-control-label ml-2 mt-1" for="recurrentObject">Recurrent {{ title|slice:':-1' }}?</label>
+                    </div>
+			    </div>
+			    <div class="form-group col-md-12">
+			    	<input type="submit" class="btn btn-{{ color }} btn-lg btn-block" {% if not user.email_verified %}disabled{% endif %}
+					value="{% if request.get_full_path == '/users/incomes/' or request.get_full_path == '/users/spendings/' %}Add {{ title|slice:':-1' }}{% else %}Update{% endif %}">
+			    </div>
+			</div>
+		</form>
+		<br>
+		<hr>
+
+		<div class="row">
+
+			<div class="col-xl-6 col-md-6 mb-4">
+		        <div class="card border-left-{{ color }} shadow h-100 py-2">
+		            <div class="card-body">
+		                <div class="row no-gutters align-items-center">
+		                    <div class="col mr-2">
+		                        <div class="text-xs font-weight-bold text-{{ color }} text-uppercase mb-1">Current Month {{ title }} ({{ currency }})</div>
+		                        <div class="h5 mb-0 font-weight-bold text-gray-800">{% if total_sum %}{{ total_sum }}{% else %}0.0{% endif %}</div>
+		                    </div>
+		                    <div class="col-auto">
+		                        <i class="fas {% if title == 'Incomes' %} fa-wallet {% elif title == 'Spendings' %} fa-credit-card {% endif %} fa-2x text-gray-300"></i>
+		                    </div>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+
+		    <div class="col-xl-6 col-md-6 mb-4">
+		        <div class="card border-left-warning shadow h-100 py-2">
+		            <div class="card-body">
+		                <div class="row no-gutters align-items-center">
+		                    <div class="col mr-2">
+		                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Last Month {{ title }} ({{ currency }})</div>
+		                        <div class="h5 mb-0 font-weight-bold text-gray-800">{% if total_sum_last_month %}{{ total_sum_last_month }}{% else %}0.0{% endif %}</div>
+		                    </div>
+		                    <div class="col-auto">
+		                        <i class="fas {% if title == 'Incomes' %} fa-wallet {% elif title == 'Spendings' %} fa-credit-card {% endif %} fa-2x text-gray-300"></i>
+		                    </div>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+
+		</div>
+
+		<div class="card shadow mb-4">
+		  <div class="card-header py-3">
+		  	<h6 class="m-0 font-weight-bold text-{{ color }}">{{ title }} - {{ date|date:"Y/d" }}</h6>
+		  </div>
+		  <div class="card-body">
+		    <div class="table-responsive">
+		      <table class="table table-bordered" id="incomesAndSpendingsDataTable" width="100%" cellspacing="0">
+		        <thead>
+		          <tr>
+		            <th>Name</th>
+		            <th>Amount</th>
+		            <th>Category</th>
+		            <th>Recurrent</th>
+		            <th>Date</th>
+					{% if request.get_full_path == '/users/incomes/' or request.get_full_path == '/users/spendings/' %}
+						<th>Delete/Update</th>
+					{% endif %}
+		          </tr>
+		        </thead>
+		        <tfoot>
+		          <tr>
+		            <th>Name</th>
+		            <th>Amount</th>
+		            <th>Category</th>
+		            <th>Recurrent</th>
+		            <th>Date</th>
+		            {% if request.get_full_path == '/users/incomes/' or request.get_full_path == '/users/spendings/' %}
+						<th>Delete/Update</th>
+					{% endif %}
+		          </tr>
+		        </tfoot>
+		        <tbody>
+		          {% for object in objects %}
+		          	<div class="row">
+		          		<tr>
+		      				<td class="text-center">{{ object.name }}</td>
+		      				<td class="text-center">{{ object.amount }}</td>
+		      				<td class="text-center">{{ object.category }}</td>
+		          			<td class="text-center">{% if object.recurrent == True %}Yes{% else %}No{% endif %}</td>
+		          			<td class="text-center">{{ object.created_date|date:"F-d-Y" }}</td>
+							{% if request.get_full_path == '/users/incomes/' or request.get_full_path == '/users/spendings/' %}
+								<td class="text-center">
+									<a class="btn-circle bnt-sm btn-danger" data-toggle="modal" href="#incomeAndSpendingsDeleteModal{{ title }}{{ object.id }}" data-target="#incomeAndSpendingsDeleteModal{{ title }}{{ object.id }}"><i class="fas fa-trash"></i></a>
+									<a class="btn-circle bnt-sm btn-success ml-2" href="{{ object.update_url }}"><i class="fas fa-pen"></i></a>
+								</td>
+								<div class="modal fade" id="incomeAndSpendingsDeleteModal{{ title }}{{ object.id }}" tabindex="-1" aria-labelledby="exampleModalLabel"
+				  				  aria-hidden="true">
+				  				  <div class="modal-dialog" role="document">
+				  					  <div class="modal-content">
+				  						  <div class="modal-header">
+				  							  <h5 class="modal-title" id="exampleModalLabel">Delete "{{ object.name }}"?</h5>
+				  							  <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+				  								  <span aria-hidden="true">×</span>
+				  							  </button>
+				  						  </div>
+				  						  <div class="modal-body">
+											  {% if object.recurrent %}
+											    Select "Delete" if you want to delete "{{ object.name }}", the {{ title|slice:':-1'|lower }} you're trying to delete is recurrent, you don't want to have it at all?
+												if you select "Yes" below, the next month this {{ title|slice:':-1'|lower }} it wouldn't automatically appear in your profile!
+											  {% else %}
+											  	Select "Delete" if you want to delete "{{ object.name }}"
+											  {% endif %}
+										  </div>
+				  						  <div class="modal-footer">
+				  							  <form method="POST" action="{{ object.delete_url }}">
+				  								  {% csrf_token %}
+												  {% if object.recurrent %}
+												  	<label for="deleteRecurrentObject">Yes, Delete next month {{ title|slice:':-1'|lower }}</label>
+												  	<input type="checkbox" name="deleteNextRecurrentObject" class="mr-3" id="deleteRecurrentObject">
+												  {% endif %}
+				  								  <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+				  								  <button type="submit" name="delete" class="btn btn-danger">Delete</button>
+				  							  </form>
+				  						  </div>
+				  					  </div>
+				  				  </div>
+				  			  </div>
+						  {% endif %}
+						</tr>
+		          	</div>
+		          {% endfor %}
+		        </tbody>
+		      </table>
+		    </div>
+		  </div>
+		</div>
+	</div>
+{% endblock %}

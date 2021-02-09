@@ -1,0 +1,214 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+	{% if title %}
+		<title>EcoMon - {{ title }}</title>
+	{% else %}
+		<title>EcoMon</title>
+	{% endif %}
+
+	<link rel="icon" href="{% static 'img/Fevicon.png' %}" type="image/png">
+	<link rel="stylesheet" href="{% static 'vendors/bootstrap/bootstrap.min.css' %}">
+	<link rel="stylesheet" href="{% static 'vendors/themify-icons/themify-icons.css' %}">
+	<link rel="stylesheet" href="{% static 'vendors/owl-carousel/owl.theme.default.min.css' %}">
+	<link rel="stylesheet" href="{% static 'vendors/owl-carousel/owl.carousel.min.css' %}">
+	<link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+
+	<!-- Custom fonts for this template-->
+    <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
+
+</head>
+<body>
+	<!--================ Header Menu Area Start =================-->
+	<header class="header_area">
+	<div class="main_menu">
+	  <nav class="navbar navbar-expand-lg navbar-light">
+	    <div class="container box_1620">
+	    	{% if user.is_authenticated %}
+	    		<a class="navbar-brand logo_h" href="{% url 'dashboard' %}"><img src="{% static 'img/logo.png' %}" width="130" alt=""></a>
+	    	{% else %}
+	    		<a class="navbar-brand logo_h" href="{% url 'index' %}"><img src="{% static 'img/logo.png' %}" width="130" alt=""></a>
+	    	{% endif %}
+
+			<div class="collapse navbar-collapse offset" id="navbarSupportedContent">
+				<ul class="nav navbar-nav menu_nav justify-content-end">
+					{% if request.get_full_path == '/' %}
+						<li class="nav-item active"><a class="nav-link" href="{% url 'index' %}">Home</a></li>
+						<li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About Us</a></li>
+						<li class="nav-item"><a class="nav-link" href="{% url 'blog' %}">Blog</a></li>
+						<li class="nav-item"><a class="nav-link" href="{% url 'contact' %}">Contact</a></li>
+					{% elif request.get_full_path == '/about/' %}
+						<li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Home</a></li>
+						<li class="nav-item active"><a class="nav-link" href="{% url 'about' %}">About Us</a></li>
+						<li class="nav-item"><a class="nav-link" href="{% url 'blog' %}">Blog</a></li>
+						<li class="nav-item"><a class="nav-link" href="{% url 'contact' %}">Contact</a></li>
+					{% elif request.get_full_path == '/blog/' %}
+						<li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Home</a></li>
+						<li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About Us</a></li>
+						<li class="nav-item active"><a class="nav-link" href="{% url 'blog' %}">Blog</a></li>
+						<li class="nav-item"><a class="nav-link" href="{% url 'contact' %}">Contact</a></li>
+					{% elif request.get_full_path == '/contact/' %}
+						<li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Home</a></li>
+						<li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About Us</a></li>
+						<li class="nav-item"><a class="nav-link" href="{% url 'blog' %}">Blog</a></li>
+						<li class="nav-item active"><a class="nav-link" href="{% url 'contact' %}">Contact</a></li>
+					{% else %}
+						<li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Home</a></li>
+						<li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About Us</a></li>
+						<li class="nav-item active"><a class="nav-link" href="{% url 'blog' %}">Blog</a></li>
+						<li class="nav-item"><a class="nav-link" href="{% url 'contact' %}">Contact</a></li>
+					{% endif %}
+				</ul>
+
+				<div class="nav-right text-center text-lg-right py-4 py-lg-0">
+					<a class="button button-outline button-small" href="{% if user.is_authenticated %}{% url 'profile' %}{% else %}{% url 'login' %}{% endif %}">
+						{% if user.is_authenticated %}
+							Profile
+						{% else %}
+							Login
+						{% endif %}
+					</a>
+				</div>
+			</div>
+	    </div>
+	  </nav>
+	</div>
+	</header>
+	<!--================ Header Menu Area End =================-->
+
+		<!--================ Index Banner Section Area Start =================-->
+	{% if request.get_full_path == '/' %}
+		<section class="hero-banner text-center">
+			<div class="container">
+				{% if messages %}
+					{% for message in messages %}
+						<div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+						  {{ message }}
+						  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						  </button>
+						</div>
+					{% endfor %}
+				{% endif %}
+			</div>
+			<div class="container">
+				<p class="text-uppercase">Start Your Own Company</p>
+				<h1>Save More Money</h1>
+				<p class="hero-subtitle">You don't have enough money? Manage them better then. It's easier with our platform. Sign up and you'll see.</p>
+				<a class="button button-outline" href="{% url 'register' %}">Get Started</a>
+			</div>
+		</section>
+		<!--================ Index Section Area End =================-->
+	{% else %}
+		<!--================ Banner SM Section start =================-->
+		<section class="hero-banner hero-banner-sm text-center">
+			<div class="container">
+				{% if messages %}
+					{% for message in messages %}
+						<div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+						  {{ message }}
+						  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						  </button>
+						</div>
+					{% endfor %}
+				{% endif %}
+			</div>
+			<div class="container">
+				<h1>{{ banner_page_title }}</h1>
+				<nav aria-label="breadcrumb" class="banner-breadcrumb">
+					<ol class="breadcrumb">
+						<li class="breadcrumb-item active" aria-current="page">{{ page_location }}</li>
+					</ol>
+				</nav>
+			</div>
+		</section>
+		<!--================ Banner SM Section end =================-->
+	{% endif %}
+
+	{% block content %}
+	{% endblock content %}
+
+	<!-- ================ Footer Menu Area Start ================= -->
+	<footer class="footer-area section-gap">
+		<div class="container">
+			<div class="row">
+				<div class="col-xl-3 col-sm-6 mb-4 mb-xl-0 single-footer-widget">
+					<h4>About Us</h4>
+	      				<p>Heaven fruitful doesn't over lesser days appear creeping seasons so behold bearing days open</p>
+						{% if user.is_authenticated %}
+							<a class="navbar-brand logo_h d-none d-xl-block" href="{% url 'dashboard' %}"><img src="{% static 'img/logo.png' %}" width="130" alt=""></a>
+						{% else %}
+							<a class="navbar-brand logo_h d-none d-xl-block" href="{% url 'index' %}"><img src="{% static 'img/logo.png' %}" width="130" alt=""></a>
+						{% endif %}
+				</div>
+				<div class="col-xl-3 col-sm-6 mb-4 mb-xl-0 single-footer-widget">
+					<h4>Contact Info</h4>
+					<ul>
+						<li>Address: Our address</li>
+						<li><a href="tel:+88044338899">Phone: +123456789</a></li>
+						<li><a href="">Email: name@example.com</a></li>
+					</ul>
+				</div>
+				<div class="offset-xl-1 col-xl-4 col-sm-6 mb-4 mb-xl-0 single-footer-widget">
+					<h4>Newsletter</h4>
+	      			<p>We post very often on the blog and bring updates on the platform, if you will subscribe you will hear from us everything as soon we made the changes</p>
+			        <div class="form-wrap">
+				        <form method="POST">
+				        	{% csrf_token %}
+				            <div class="input-group">
+				            	<input type="email" class="form-control" name="newsletter_email" placeholder="Your Email Address" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Your Email Address '">
+					            <div class="input-group-append">
+						            <button class="btn click-btn" type="submit">
+						            	<i class="ti-arrow-right"></i>
+						            </button>
+					            </div>
+				            </div>
+				        </form>
+			        </div>
+				</div>
+			</div>
+			<div class="footer-bottom row align-items-center text-center text-lg-left">
+				<p class="footer-text m-0 col-lg-8 col-md-12">Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | Designed by <a href="{% url 'index' %}">EcoMon</a></p>
+				<div class="col-lg-4 col-md-12 text-center text-lg-right footer-social">
+					<a href="#"><i class="ti-facebook"></i></a>
+					<a href="#"><i class="ti-twitter-alt"></i></a>
+					<a href="#"><i class="ti-dribbble"></i></a>
+					<a href="#"><i class="ti-linkedin"></i></a>
+				</div>
+			</div>
+		</div>
+	</footer>
+	<!-- ================ Footer Menu Area End ================= -->
+
+	<script src="{% static 'vendors/jquery/jquery-3.2.1.min.js' %}"></script>
+	<script src="{% static 'vendors/bootstrap/bootstrap.bundle.min.js' %}"></script>
+	<script src="{% static 'vendors/owl-carousel/owl.carousel.min.js' %}"></script>
+	<script src="{% static 'js/jquery.ajaxchimp.min.js' %}"></script>
+	<script src="{% static 'js/mail-script.js' %}"></script>
+	<script src="{% static 'js/main.js' %}"></script>
+
+	<!-- Bootstrap core JavaScript-->
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="{% static 'js/sb-admin-2.min.js' %}"></script>
+
+    <!-- Page level plugins -->
+    <script src="{% static 'vendor/chart.js/Chart.min.js' %}"></script>
+    <script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+</body>
+</html>

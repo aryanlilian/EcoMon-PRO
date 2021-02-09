@@ -1,0 +1,74 @@
+{% extends 'home/base.html' %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="container">
+    <div class="comment-form">
+        <h4>Add a new Post</h4>
+        <form class="form-contact comment_form" method="POST" id="commentForm" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="col-12">
+                <div class="form-group">
+                    {% render_field form.title  class="form-control" id="website" placeholder="Post Title" %}
+                    {% for error in form.title.errors %}
+                        <small class="text-xs font-weight text-danger">{{ error }}</small>
+                    {% endfor %}
+                    {% if not form.title.errors %}
+                        <small class="text-xs font-weight text-secondary">{{ form.title.help_text }}</small>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {% render_field form.content class="form-control w-100" id="commentContent" placeholder="Post Content" %}
+                    {% for error in form.content.errors %}
+                        <small class="text-xs font-weight text-danger">{{ error }}</small>
+                    {% endfor %}
+                    {% if not form.content.errors %}
+                        <small class="text-xs font-weight text-secondary">{{ form.content.help_text }}</small>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {% render_field form.category class="form-control" id="website" %}
+                </div>
+                <div class="form-group">
+                    {% render_field form.full_image class="form-control" id="website" %}
+                    {% for error in form.full_image.errors %}
+                        <small class="text-xs font-weight text-danger">{{ error }}</small>
+                    {% endfor %}
+                    {% if not form.full_image.errors %}
+                        <small class="text-xs font-weight text-secondary">{{ form.full_image.help_text }}</small>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {% render_field form.medium_image class="form-control" id="website" %}
+                    {% for error in form.medium_image.errors %}
+                        <small class="text-xs font-weight text-danger">{{ error }}</small>
+                    {% endfor %}
+                    {% if not form.medium_image.errors %}
+                        <small class="text-xs font-weight text-secondary">{{ form.medium_image.help_text }}</small>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {% render_field form.small_image class="form-control" id="website" %}
+                    {% for error in form.small_image.errors %}
+                        <small class="text-xs font-weight text-danger">{{ error }}</small>
+                    {% endfor %}
+                    {% if not form.small_image.errors %}
+                        <small class="text-xs font-weight text-secondary">{{ form.small_image.help_text }}</small>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {% render_field form.tags class="form-control" id="website" placeholder="Post Tags" %}
+                    {% for error in form.tags.errors %}
+                        <small class="text-xs font-weight text-danger">{{ error }}</small>
+                    {% endfor %}
+                    {% if not form.tags.errors %}
+                        <small class="text-xs font-weight text-secondary">{{ form.tags.help_text }}</small>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="button button-contactForm">{% if request.get_full_path == '/blog/new/post/' %}Publish Post{% else %}Update Comment{% endif %}</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

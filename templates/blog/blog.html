@@ -1,0 +1,139 @@
+{% extends 'home/base.html' %}
+{% load static %}
+{% load tags %}
+{% block content %}
+    <!--================Blog Area =================-->
+    <section class="blog_area section-margin">
+      <div class="container">
+            {% if user.is_authenticated and user.is_superuser or user.is_staff %}
+                <div class="form-group">
+                    <a class="button button-contactForm" {% if not user.email_verified %}href="#"{% else %}href="{% url 'add-post' %}"{% endif %}>Add Post</a>
+                </div>
+            {% endif %}
+          <div class="row">
+              <div class="col-lg-8 mb-5 mb-lg-0">
+                  <div class="blog_left_sidebar">
+                    {% for post in posts %}
+                      <article class="blog_item">
+                        <div class="blog_item_img">
+                          <img class="card-img rounded-0" src="{{ post.medium_image.url }}" alt="Post Image">
+                          <a href="{% url 'post' post.slug %}" class="blog_item_date">
+                            <h3>{{ post.published_date|date:"d" }}</h3>
+                            <p>{{ post.published_date|date:"M" }}</p>
+                          </a>
+                        </div>
+
+                        <div class="blog_details">
+                            <a class="d-inline-block" href="{% url 'post' post.slug %}">
+                                <h2>{{ post.title }}</h2>
+                            </a>
+                            <p>{{ post.content|truncatechars:190 }}</p>
+                            <ul class="blog-info-link">
+                              <li><i class="ti-user"> {{ post.author.username }}</i></li>
+                              {% if post.comments_count %}
+                              <li><i class="ti-comments"></i>{{ post.comments_count }} - Comments</li>
+                              {% else %}
+                                <li><i class="ti-comments"></i>0 Comments</li>
+                              {% endif %}
+                            </ul>
+                        </div>
+                      </article>
+                    {% endfor %}
+
+                    {% if is_paginated %}
+                      <nav class="blog-pagination justify-content-center d-flex">
+                        <ul class="pagination">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a href="?{% param_replace page=page_obj.previous_page_number %}" class="page-link" aria-label="Previous">
+                                    <span aria-hidden="true">
+                                        <span class="ti-arrow-left"></span>
+                                    </span>
+                                </a>
+                            </li>
+                        {% endif %}
+
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <li class="page-item active">
+                                    <a href="?{% param_replace page=num %}" class="page-link">{{ num }}</a>
+                                </li>
+                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                <li class="page-item">
+                                    <a href="?{% param_replace page=num %}" class="page-link">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a href="?{% param_replace page=page_obj.next_page_number %}" class="page-link" aria-label="Next">
+                                    <span aria-hidden="true">
+                                        <span class="ti-arrow-right"></span>
+                                    </span>
+                                </a>
+                            </li>
+                        {% endif %}
+                        </ul>
+                      </nav>
+                    {% endif %}
+                  </div>
+              </div>
+              <div class="col-lg-4">
+                  <div class="blog_right_sidebar">
+                      <aside class="single_sidebar_widget search_widget">
+                          <form method="GET">
+                            <div class="form-group">
+                              <div class="input-group mb-3">
+                                {{ post_search_title.form }}
+                                <div class="input-group-append">
+                                  <button class="btn" type="button"><i class="ti-search"></i></button>
+                                </div>
+                              </div>
+                            </div>
+                            <button class="button rounded-0 w-100" type="submit">Search</button>
+                          </form>
+                      </aside>
+
+                      <aside class="single_sidebar_widget popular_post_widget">
+                          <h3 class="widget_title">Recent Post</h3>
+                          {% for post in recent_posts %}
+                            <div class="media post_item">
+                              <img src="{{ post.small_image.url }}" alt="post">
+                              <div class="media-body">
+                                  <a href="{% url 'post' post.slug %}">
+                                      <h3>{{ post.title }}</h3>
+                                  </a>
+                                  <p>{{ post.date_posted|date:"F m, Y" }}</p>
+                              </div>
+                            </div>
+                          {% endfor %}
+                      </aside>
+                      <aside class="single_sidebar_widget tag_cloud_widget">
+                          <h4 class="widget_title">Post Tags</h4>
+                          <ul class="list">
+                              {% for tag in tags %}
+                                <li>
+                                    <a href="{% url 'tag' tag.slug %}">{{ tag }}</a>
+                                </li>
+                             {% endfor %}
+                          </ul>
+                      </aside>
+
+                      <aside class="single_sidebar_widget newsletter_widget">
+                        <h4 class="widget_title">Newsletter</h4>
+                        <form action="" method="POST">
+                          {% csrf_token %}
+                          <div class="form-group">
+                            <input type="email" class="form-control" name="newsletter_email" placeholder="Enter email" required>
+                          </div>
+                          <button class="button rounded-0 w-100" type="submit">Subscribe</button>
+                        </form>
+                      </aside>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </section>
+  <!--================Blog Area =================-->
+{% endblock %}

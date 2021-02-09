@@ -1,0 +1,6 @@
+Hello there, username!
+
+We hope you are well,
+and you've received this email because you've requested an email verification for your account.
+
+Click on the link below to perform the activation of your account:
