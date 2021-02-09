@@ -14,7 +14,7 @@ class UserRegistrationForm(UserCreationForm):
     first_name = forms.CharField(widget=forms.TextInput(), help_text=help_texts['only_letters'])
     last_name = forms.CharField(widget=forms.TextInput(), help_text=help_texts['only_letters'])
     send_marketing_emails = forms.BooleanField(widget=forms.CheckboxInput(), required=False)
-    accept_terms_and_conditions = forms.BooleanField(widget=forms.CheckboxInput())
+    accept_terms_and_conditions = forms.BooleanField(widget=forms.CheckboxInput(), required=False)
 
     class Meta:
         model = User

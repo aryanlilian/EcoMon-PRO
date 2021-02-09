@@ -4,7 +4,6 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from . import mixins
 from django.urls import reverse
-from django.contrib.sites.shortcuts import get_current_site
 
 
 def assembly(obj):
@@ -59,7 +58,6 @@ def delete_recurrent_object(user, obj, model):
 
 
 def uidb_token_generator(link, request, token=None):
-    domain = get_current_site(request).domain
     if token is None:
         uidb64 = urlsafe_base64_encode(force_bytes(request.user.id))
         token_generator = mixins.EmailTokenGenerator()
@@ -71,5 +69,5 @@ def uidb_token_generator(link, request, token=None):
         relatively_url = reverse(
             link, kwargs={'uidb64' : uidb64}
         )
-    activate_url = 'http://' + domain + relatively_url
+    activate_url = 'http://eco-mon.herokuapp.com' relatively_url
     return activate_url
