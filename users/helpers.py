@@ -9,8 +9,8 @@ def incomes_chart_area(request):
     first_income = Income.objects.filter(user=request.user).first()
     last_income = Income.objects.filter(user=request.user).last()
     if first_income and last_income:
-        date_distance = last_income.created_date - first_income.created_date
-    if date_distance and date_distance.days <= 365:
+        date_distance = (last_income.created_date - first_income.created_date).days
+    if  1 <= date_distance <= 365:
         year, month = first_income.created_date.year, first_income.created_date.month
         while checks:
             date = datetime(year, month, 1)
@@ -60,8 +60,8 @@ def spendings_chart_area(request):
     first_spending = Spending.objects.filter(user=request.user).first()
     last_spending = Spending.objects.filter(user=request.user).last()
     if first_spending and last_spending:
-        date_distance = last_spending.created_date - first_spending.created_date
-    if date_distance and date_distance.days <= 365:
+        date_distance = (last_spending.created_date - first_spending.created_date).days
+    if 1 <= date_distance <= 365:
         year, month = first_spending.created_date.year, first_spending.created_date.month
         while checks:
             date = datetime(year, month, 1)
