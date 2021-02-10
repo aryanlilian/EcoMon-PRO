@@ -5,7 +5,7 @@ from django.http import JsonResponse
 
 
 def incomes_chart_area(request):
-    incomes_data, date_distance, checks = [], None, 12
+    incomes_data, date_distance, checks = [], -1, 12
     first_income = Income.objects.filter(user=request.user).first()
     last_income = Income.objects.filter(user=request.user).last()
     if first_income and last_income:
@@ -24,7 +24,7 @@ def incomes_chart_area(request):
                 incomes_data.append({date.strftime('%b'): assembly(incomes)})
                 month += 1
             checks -= 1
-    elif date_distance:
+    elif date_distance > 0:
         year, month = last_income.created_date.year - 1, last_income.created_date.month + 1
         while checks:
             date = datetime(year, month, 1)
@@ -56,7 +56,7 @@ def incomes_chart_area(request):
 
 
 def spendings_chart_area(request):
-    spendings_data, date_distance, checks = [], None, 12
+    spendings_data, date_distance, checks = [], -1, 12
     first_spending = Spending.objects.filter(user=request.user).first()
     last_spending = Spending.objects.filter(user=request.user).last()
     if first_spending and last_spending:
@@ -75,7 +75,7 @@ def spendings_chart_area(request):
                 spendings_data.append({date.strftime('%b'): assembly(spendings)})
                 month += 1
             checks -= 1
-    elif date_distance:
+    elif date_distance > 0:
         year, month = last_spending.created_date.year - 1, last_spending.created_date.month + 1
         while checks:
             date = datetime(year, month, 1)

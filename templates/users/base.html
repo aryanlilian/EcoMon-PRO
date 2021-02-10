@@ -13,6 +13,7 @@
         <title>EcoMon</title>
     {% endif %}
 
+    <link rel="icon" href="{% static 'img/Fevicon.png' %}" type="image/png">
     <!-- Custom fonts for this template-->
     <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
@@ -300,7 +301,7 @@
             'months': [],
             'values': [],
         }
-        var incomesChartAreaURL = '/users/dashboard/incomes-chart-area'
+        var incomesChartAreaURL = '/users/dashboard/incomes-chart-area/'
 
         $.ajax({
             method: 'GET',
@@ -441,7 +442,7 @@
             'months': [],
             'values': [],
         }
-        var spendingsChartAreaURL = '/users/dashboard/spendings-chart-area'
+        var spendingsChartAreaURL = '/users/dashboard/spendings-chart-area/'
 
         $.ajax({
             method: 'GET',
@@ -557,7 +558,7 @@
             'names': [],
             'values': [],
         }
-        var incomesChartPieURL = '/users/dashboard/incomes-chart-pie'
+        var incomesChartPieURL = '/users/dashboard/incomes-chart-pie/'
 
         $.ajax({
             method: 'GET',
@@ -617,7 +618,7 @@
             'names': [],
             'values': [],
         }
-        var spendingsChartPieURL = '/users/dashboard/spendings-chart-pie'
+        var spendingsChartPieURL = '/users/dashboard/spendings-chart-pie/'
 
         $.ajax({
             method: 'GET',
