@@ -8,10 +8,10 @@ from users.views import (
     ArchiveView
 )
 from users.helpers import (
-    incomes_chart_area_data,
-    spendings_chart_area_data,
-    incomes_chart_pie_data,
-    spendings_chart_pie_data
+    incomes_chart_area,
+    spendings_chart_area,
+    incomes_chart_pie,
+    spendings_chart_pie
 )
 
 class TestUrls(SimpleTestCase):
@@ -22,19 +22,19 @@ class TestUrls(SimpleTestCase):
 
     def test_incomes_chart_area_url_resolves(self):
         url = reverse('incomes-chart-area')
-        self.assertEquals(resolve(url).func, incomes_chart_area_data)
+        self.assertEquals(resolve(url).func, incomes_chart_area)
 
     def test_incomes_chart_pie_url_resolves(self):
         url = reverse('incomes-chart-pie')
-        self.assertEquals(resolve(url).func, incomes_chart_pie_data)
+        self.assertEquals(resolve(url).func, incomes_chart_pie)
 
     def test_spendings_chart_area_url_resolves(self):
         url = reverse('spendings-chart-area')
-        self.assertEquals(resolve(url).func, spendings_chart_area_data)
+        self.assertEquals(resolve(url).func, spendings_chart_area)
 
     def test_spendings_chart_pie_url_resolves(self):
         url = reverse('spendings-chart-pie')
-        self.assertEquals(resolve(url).func, spendings_chart_pie_data)
+        self.assertEquals(resolve(url).func, spendings_chart_pie)
 
     def test_profile_url_resolves(self):
         url = reverse('profile')
