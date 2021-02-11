@@ -180,10 +180,11 @@
 
                     {% if not user.email_verified %}
                         <div class="alert alert-warning mb-5" role="alert">
-                            <h4 class="alert-heading">Very your Email!</h4>
-                            <p>Welcome, please <a href="{% url 'email-verification' %}">verify your email</a> in order to have full access on the platform</p>
+                            <h4 class="alert-heading">Verify your Email!</h4>
+                            <p>Welcome, please verify your email in order to have full access on the platform</p>
                             <hr>
-                            <p class="mb-0">Without an <a href="{% url 'email-verification' %}">email verification</a> you'll not be able to add incomes, spendings, update your profile, post comments, replies, sent contact emails etc.</p>
+                            <a class="btn btn-outline-primary btn-sm" href="{% url 'email-verification' %}">click here for verification</a></p>
+                            <p class="mb-0">Without an email verification</a> you'll not be able to add incomes, spendings, update your profile, post comments, replies, etc.</p>
                         </div>
                     {% endif %}
 
