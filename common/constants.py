@@ -2,10 +2,10 @@ from django.utils.translation import ugettext_lazy as _
 
 
 error_messages = {
-    'first_name' : _('First name can contain only letters.'),
-    'last_name' : _('Last name can contain only letters.'),
+    'first_name' : _('First name can contain only letters!'),
+    'last_name' : _('Last name can contain only letters!'),
     'required' : _('This field is required!'),
-    'post_title_size' : _('The length of the title can\'t be longer then 200 characters'),
+    'post_title_size' : _('The length of the title can\'t be longer then 200 characters!'),
     'no_image' : _('Required. Upload an image!'),
     'full_image_width' : _('The image is %i pixel wide. Needs to be 1920px!'),
     'full_image_height' : _('The image is %i pixel high. Needs to be 1080px!'),
@@ -15,6 +15,7 @@ error_messages = {
     'small_image_height' : _('The image is %i pixel high. Needs to be 60px!'),
     'profile_image_width' : _('The image is %i pixel wide. Needs to be 150px!'),
     'profile_image_height' : _('The image is %i pixel high. Needs to be 150px!'),
+    'to_large_number' : _('The number is to large. The max number is 9,999,999.999!')
 }
 
 email_activation = {

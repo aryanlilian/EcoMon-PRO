@@ -127,6 +127,11 @@ class IncomeCreateForm(forms.ModelForm):
     )
     recurrent = forms.BooleanField(required=False, label='Recurrent?')
 
+    def clean_amount(self):
+        amount = self.cleaned_data.get('amount')
+        if amount > 9999999.999:
+            raise ValidationError(error_messages['to_large_number'])
+
     class Meta:
         model = Income
         exclude = [

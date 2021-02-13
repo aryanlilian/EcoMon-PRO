@@ -23,7 +23,7 @@ urlpatterns = [
     path('spendings/update/<int:pk>/', SpendingUpdateView.as_view(), name='update-spending'),
     path('incomes/delete/<int:pk>/', IncomeDeleteView.as_view(), name='delete-income'),
     path('spendings/delete/<int:pk>/', SpendingDeleteView.as_view(), name='delete-spending'),
-    path('archive', ArchiveView.as_view(), name='archive'),
+    path('archive/', ArchiveView.as_view(), name='archive'),
     path('verification/', EmailVerificationView.as_view(), name='email-verification'),
     path('send/verification/<uidb64>/<token>/', SendOrVerifyEmailVerificationView.as_view(), name='send-or-verify-email-verification'),
 ]
