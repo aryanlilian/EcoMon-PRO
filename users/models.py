@@ -82,6 +82,58 @@ class Profile(models.Model):
         return f'{self.user.username}\'s Profile'
 
 
+class Account(models.Model):
+
+    class Currency(models.TextChoices):
+        AED = 'AED', _('AED')
+        AUD = 'AUD', _('AUD')
+        BRL = 'BRL', _('BRL')
+        CAD = 'CAD', _('CAD')
+        CHF = 'CHF', _('CHF')
+        CLP = 'CLP', _('CLP')
+        CNY = 'CNY', _('CNY')
+        COP = 'COP', _('COP')
+        CZK = 'CZK', _('CZK')
+        DKK = 'DKK', _('DKK')
+        EUR = 'EUR', _('EUR')
+        GBP = 'GBP', _('GBP')
+        HKD = 'HKD', _('HKD')
+        HUF = 'HUF', _('HUF')
+        IDR = 'IDR', _('IDR')
+        ILS = 'ILS', _('ILS')
+        INR = 'INR', _('INR')
+        JPY = 'JPY', _('JPY')
+        KRW = 'KRW', _('KRW')
+        MDL = 'MDL', _('MDL')
+        MXN = 'MXN', _('MXN')
+        MYR = 'MYR', _('MYR')
+        NOK = 'NOK', _('NOK')
+        NZD = 'NZD', _('NZD')
+        PHP = 'PHP', _('PHP')
+        PLN = 'PLN', _('PLN')
+        RON = 'RON', _('RON')
+        RUB = 'RUB', _('RUB')
+        SAR = 'SAR', _('SAR')
+        SEK = 'SEK', _('SEK')
+        SGD = 'SGD', _('SGD')
+        THB = 'THB', _('THB')
+        TRY = 'TRY', _('TRY')
+        TWD = 'TWD', _('TWD')
+        USD = 'USD', _('USD')
+        ZAR = 'ZAR', _('ZAR')
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(_('Name'), max_length=200)
+    created_date = models.DateTimeField(_('Created Date/Time'), auto_now_add=True)
+    updated_date = models.DateTimeField(_('Updated Date/Time'), auto_now=True)
+    currency = models.CharField(
+        _('Currency'), max_length=3, choices=Currency.choices, default=Currency.USD
+    )
+
+    def __str__(self):
+        return f'{self.name} - {self.currency}'
+
+
 class Income(models.Model):
 
     class IncomeCategory(models.TextChoices):

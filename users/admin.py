@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .forms import UserRegistrationForm
-from .models import User, Income, Spending, Profile
+from .models import User, Profile, Account, Income, Spending
 
 
 @admin.register(User)
@@ -50,6 +50,16 @@ class CustomUserAdmin(UserAdmin):
     )
 
 
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ('__str__', 'created_date', 'updated_date',)
+
+
+@admin.register(Account)
+class AccountAdmin(admin.ModelAdmin):
+    list_display = ('__str__', 'created_date', 'updated_date',)
+
+
 @admin.register(Income)
 class IncomeAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'created_date', 'updated_date',)
@@ -57,9 +67,4 @@ class IncomeAdmin(admin.ModelAdmin):
 
 @admin.register(Spending)
 class SpendingAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'created_date', 'updated_date',)
-
-
-@admin.register(Profile)
-class ProfileAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'created_date', 'updated_date',)
