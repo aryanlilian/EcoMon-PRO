@@ -15,6 +15,7 @@ class User(AbstractUser):
     birth_date = models.DateField(_('Birth Date'), auto_now_add=False, null=True, blank=True)
     phone_number = PhoneNumberField(_('Phone Number'), null=True, blank=True, unique=True)
     email_verified = models.BooleanField(_('Email Verified'), default=False)
+    pro_membership = models.BooleanField(_('Pro Membership'), default=False)
     phone_number_verified = models.BooleanField(_('Phone Number Verified'), default=False)
     send_marketing_emails = models.BooleanField(_('Send marketing emails'), default=False)
     accept_terms_conditions_and_security_policy = models.BooleanField(
@@ -152,6 +153,7 @@ class Income(models.Model):
         OTHERS = _('Others')
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    account = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='incomes')
     name = models.CharField(_('Name'), max_length=100)
     amount = models.DecimalField(_('Amount'), max_digits=10, decimal_places=3)
     recurrent = models.BooleanField(_('Recurrent Income'), default=False)
@@ -190,6 +192,7 @@ class Spending(models.Model):
         OTHERS = _('Others')
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    account = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='spendings')
     name = models.CharField(_('Name'), max_length=50)
     amount = models.DecimalField(_('Amount'), max_digits=10, decimal_places=3)
     recurrent = models.BooleanField(_('Recurrent Spending'), default=False)

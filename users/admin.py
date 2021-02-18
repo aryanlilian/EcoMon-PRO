@@ -32,6 +32,14 @@ class CustomUserAdmin(UserAdmin):
             }
         ),
         (
+            'Pro Membership',
+            {
+                'fields': (
+                    'pro_membership',
+                )
+            }
+        ),
+        (
             'Birth Date',
             {
                 'fields': (
