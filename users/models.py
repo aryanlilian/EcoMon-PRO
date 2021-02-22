@@ -153,7 +153,6 @@ class Income(models.Model):
         OTHERS = _('Others')
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    account = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='incomes')
     name = models.CharField(_('Name'), max_length=100)
     amount = models.DecimalField(_('Amount'), max_digits=10, decimal_places=3)
     recurrent = models.BooleanField(_('Recurrent Income'), default=False)
@@ -192,7 +191,6 @@ class Spending(models.Model):
         OTHERS = _('Others')
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    account = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='spendings')
     name = models.CharField(_('Name'), max_length=50)
     amount = models.DecimalField(_('Amount'), max_digits=10, decimal_places=3)
     recurrent = models.BooleanField(_('Recurrent Spending'), default=False)
