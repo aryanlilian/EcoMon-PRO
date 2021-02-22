@@ -131,6 +131,7 @@ class IncomeCreateForm(forms.ModelForm):
         amount = self.cleaned_data.get('amount')
         if amount > 9999999.999:
             raise ValidationError(error_messages['to_large_number'])
+        return amount
 
     class Meta:
         model = Income
@@ -153,6 +154,12 @@ class SpendingCreateForm(forms.ModelForm):
         help_text=help_texts['obj_amount']
     )
     recurrent = forms.BooleanField(required=False, label='Recurrent?')
+
+    def clean_amount(self):
+        amount = self.cleaned_data.get('amount')
+        if amount > 9999999.999:
+            raise ValidationError(error_messages['to_large_number'])
+        return amount
 
     class Meta:
         model = Spending
