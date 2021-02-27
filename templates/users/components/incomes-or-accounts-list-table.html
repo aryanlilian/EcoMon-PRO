@@ -56,51 +56,55 @@
         </tfoot>
         <tbody>
             {% if request.get_full_path == '/users/archive/' %}
-              {% for object in incomes %}
-                  <div class="row">
-                      <tr>
-                          <td class="text-center">{% if request.get_full_path == '/users/accounts/new/' %}<a href="{% url 'dashboard' object.id %}">{{ object.name }}</a>{% else %}{{ object.name }}{% endif %}</td>
-                          {% if '/users/incomes/new/' in request.get_full_path or '/users/incomes/update/' in request.get_full_path %}
-                              <td class="text-center">{{ object.amount }}</td>
-                          {% endif %}
-                          <td class="text-center">{{ object.category }}</td>
-                          <td class="text-center">
-                              {% if '/users/incomes/new/' in request.get_full_path or '/users/incomes/update/' in request.get_full_path or request.get_full_path == '/users/archive/' %}
-                                  {% if object.recurrent == True %}Yes{% else %}No{% endif %}
-                              {% else %}
-                                  {{ object.currency }}
+                {% if incomes %}
+                  {% for object in incomes %}
+                      <div class="row">
+                          <tr>
+                              <td class="text-center">{% if request.get_full_path == '/users/accounts/new/' %}<a href="{% url 'dashboard' object.id %}">{{ object.name }}</a>{% else %}{{ object.name }}{% endif %}</td>
+                              {% if '/users/incomes/new/' in request.get_full_path or '/users/incomes/update/' in request.get_full_path %}
+                                  <td class="text-center">{{ object.amount }}</td>
                               {% endif %}
-                          </td>
-                          <td class="text-center">{{ object.created_date|date:"F-d-Y" }}</td>
-                          {% if '/users/incomes/new/' in request.get_full_path or request.get_full_path == '/users/accounts/new/' %}
+                              <td class="text-center">{{ object.category }}</td>
                               <td class="text-center">
-                                  <a class="btn-circle bnt-sm btn-danger" data-toggle="modal" href="{% if request.get_full_path == '/users/accounts/new/' %}objectDeleteModal{{ object.id }}{% else %}objectDeleteModal{{ title }}{{ object.id }}{% endif %}" data-target="{% if request.get_full_path == '/users/accounts/new/' %}objectDeleteModal{{ object.id }}{% else %}objectDeleteModal{{ title }}{{ object.id }}{% endif %}">
-                                      <i class="fas fa-trash"></i>
-                                  </a>
-                                  <a class="btn-circle bnt-sm btn-success ml-2" href="{{ object.update_url }}"><i class="fas fa-pen"></i></a>
+                                  {% if '/users/incomes/new/' in request.get_full_path or '/users/incomes/update/' in request.get_full_path or request.get_full_path == '/users/archive/' %}
+                                      {% if object.recurrent == True %}Yes{% else %}No{% endif %}
+                                  {% else %}
+                                      {{ object.currency }}
+                                  {% endif %}
                               </td>
-                              {% include 'users/components/delete-object-modal.html' %}
-                          {% endif %}
-                      </tr>
-                  </div>
-                {% endfor %}
+                              <td class="text-center">{{ object.created_date|date:"F-d-Y" }}</td>
+                              {% if '/users/incomes/new/' in request.get_full_path or request.get_full_path == '/users/accounts/new/' %}
+                                  <td class="text-center">
+                                      <a class="btn-circle bnt-sm btn-danger" data-toggle="modal" href="{% if request.get_full_path == '/users/accounts/new/' %}objectDeleteModal{{ object.id }}{% else %}objectDeleteModal{{ title }}{{ object.id }}{% endif %}" data-target="{% if request.get_full_path == '/users/accounts/new/' %}objectDeleteModal{{ object.id }}{% else %}objectDeleteModal{{ title }}{{ object.id }}{% endif %}">
+                                          <i class="fas fa-trash"></i>
+                                      </a>
+                                      <a class="btn-circle bnt-sm btn-success ml-2" href="{{ object.update_url }}"><i class="fas fa-pen"></i></a>
+                                  </td>
+                                  {% include 'users/components/delete-object-modal.html' %}
+                              {% endif %}
+                          </tr>
+                      </div>
+                    {% endfor %}
+                {% endif %}
             {% else %}
               {% if request.get_full_path == '/users/accounts/new/' and not user.pro_membership %}
-                  <div class="row">
-                      <tr>
-                          <td class="text-center"><a href="{% url 'dashboard' objects.id %}">{{ objects.name }}</a></td>
-                          <td class="text-center">{{ objects.category }}</td>
-                          <td class="text-center">{{ objects.currency }}</td>
-                          <td class="text-center">{{ objects.created_date|date:"F-d-Y" }}</td>
-                          <td class="text-center">
-                              <a class="btn-circle bnt-sm btn-danger" data-toggle="modal" href="objectDeleteModal{{ objects.id }}" data-target="objectsDeleteModal{{ objects.id }}">
-                                  <i class="fas fa-trash"></i>
-                              </a>
-                              <a class="btn-circle bnt-sm btn-success ml-2" href="{{ objects.update_url }}"><i class="fas fa-pen"></i></a>
-                          </td>
-                          {% include 'users/components/delete-object-modal.html' %}
-                      </tr>
-                  </div>
+                  {% if objects %}
+                      <div class="row">
+                          <tr>
+                              <td class="text-center"><a href="{% url 'dashboard' objects.id %}">{{ objects.name }}</a></td>
+                              <td class="text-center">{{ objects.category }}</td>
+                              <td class="text-center">{{ objects.currency }}</td>
+                              <td class="text-center">{{ objects.created_date|date:"F-d-Y" }}</td>
+                              <td class="text-center">
+                                  <a class="btn-circle bnt-sm btn-danger" data-toggle="modal" href="objectDeleteModal{{ objects.id }}" data-target="objectsDeleteModal{{ objects.id }}">
+                                      <i class="fas fa-trash"></i>
+                                  </a>
+                                  <a class="btn-circle bnt-sm btn-success ml-2" href="{{ objects.update_url }}"><i class="fas fa-pen"></i></a>
+                              </td>
+                              {% include 'users/components/delete-object-modal.html' %}
+                          </tr>
+                      </div>
+                  {% endif %}
               {% else %}
                   {% for object in objects %}
                       <div class="row">

@@ -1,7 +1,7 @@
 {% extends 'users/base.html' %}
 {% block content %}
 <div class="container">
-    <a href="{% url 'add-accounts' %}" class="btn btn-info btn-lg btn-block mb-4">Add/Update Accounts</a>
+    <a href="{% url 'add-accounts' %}" class="btn btn-info btn-lg btn-block mb-4">{% if accounts %}Add/Update Accounts{% else %}Add Accounts{% endif %}</a>
     <hr>
     {% if not user.pro_membership and accounts %}
         <div class="alert alert-warning mb-5" role="alert">
@@ -10,20 +10,48 @@
             <hr>
             <a class="btn btn-outline-success btn-sm" href="">Buy Pro Membership</a>
         </div>
+    {% elif not accounts %}
+        <div class="alert alert-info mb-5" role="alert">
+            <h4 class="alert-heading">Zero Accounts</h4>
+            <p>You don't have any accounts yet, click on Add Accounts for creating one!</p>
+        </div>
     {% endif %}
     <div class="row">
         {% if user.pro_membership %}
-            {% for account in accounts %}
+            {% if accounts %}
+                {% for account in accounts %}
+                    <div class="col-xl-4 col-md-6 mb-4">
+                        <div class="card border-left-{% if account.category == 'Personal' %}primary{% elif account.category == 'Work' %}danger{% elif account.category == 'Investments' %}success{% elif account.category == 'Children' %}info{% else %}secondary{% endif %} shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <a href="{% url 'dashboard' account.id %}">
+                                            <div class="text-xs font-weight-bold text-{% if account.category == 'Personal' %}primary{% elif account.category == 'Work' %}danger{% elif account.category == 'Investments' %}success{% elif account.category == 'Children' %}info{% else %}secondary{% endif %} text-uppercase mb-1">
+                                                {{ account.name }} - {{ account.category }}
+                                            </div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ account.currency }}</div>
+                                        </a>
+                                    </div>
+                                    <div class="col-auto">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor" class="fas fa-2x text-gray-300" viewBox="0 0 16 16">
+                                          <path d="M14 13.292A8 8 0 0 0 8.5.015v7.778l5.5 5.5zm-.708.708L8.5 9.206v6.778a7.967 7.967 0 0 0 4.792-1.986zM7.5 15.985V9.207L2.708 14A7.967 7.967 0 0 0 7.5 15.985zM2 13.292A8 8 0 0 1 7.5.015v7.778l-5.5 5.5z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
                 <div class="col-xl-4 col-md-6 mb-4">
-                    <div class="card border-left-{% if account.category == 'Personal' %}primary{% elif account.category == 'Work' %}danger{% elif account.category == 'Investments' %}success{% elif account.category == 'Children' %}info{% else %}secondary{% endif %} shadow h-100 py-2">
+                    <div class="card border-left-secondary shadow h-100 py-2">
                         <div class="card-body">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
-                                    <a href="{% url 'dashboard' account.id %}">
-                                        <div class="text-xs font-weight-bold text-{% if account.category == 'Personal' %}primary{% elif account.category == 'Work' %}danger{% elif account.category == 'Investments' %}success{% elif account.category == 'Children' %}info{% else %}secondary{% endif %} text-uppercase mb-1">
-                                            {{ account.name }} - {{ account.category }}
+                                    <a href="{% url 'dashboard-total-account' %}">
+                                        <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">
+                                            Total Accounts
                                         </div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ account.currency }}</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ currency }}</div>
                                     </a>
                                 </div>
                                 <div class="col-auto">
@@ -35,50 +63,31 @@
                         </div>
                     </div>
                 </div>
-            {% endfor %}
-            <div class="col-xl-4 col-md-6 mb-4">
-                <div class="card border-left-secondary shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <a href="{% url 'dashboard-total-account' %}">
-                                    <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">
-                                        Total Accounts
-                                    </div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ currency }}</div>
-                                </a>
-                            </div>
-                            <div class="col-auto">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor" class="fas fa-2x text-gray-300" viewBox="0 0 16 16">
-                                  <path d="M14 13.292A8 8 0 0 0 8.5.015v7.778l5.5 5.5zm-.708.708L8.5 9.206v6.778a7.967 7.967 0 0 0 4.792-1.986zM7.5 15.985V9.207L2.708 14A7.967 7.967 0 0 0 7.5 15.985zM2 13.292A8 8 0 0 1 7.5.015v7.778l-5.5 5.5z"/>
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            {% endif %}
         {% else %}
-            <div class="col-xl-4 col-md-6 mb-4">
-                <div class="card border-left-{% if accounts.category == 'Personal' %}primary{% elif accounts.category == 'Work' %}danger{% elif accounts.category == 'Investments' %}success{% elif accounts.category == 'Children' %}info{% else %}secondary{% endif %} shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <a href="{% url 'dashboard' accounts.id %}">
-                                    <div class="text-xs font-weight-bold text-{% if accounts.category == 'Personal' %}primary{% elif accounts.category == 'Work' %}danger{% elif accounts.category == 'Investments' %}success{% elif accounts.category == 'Children' %}info{% else %}secondary{% endif %} text-uppercase mb-1">
-                                        {{ accounts.name }} - {{ accounts.category }}
-                                    </div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ accounts.currency }}</div>
-                                </a>
-                            </div>
-                            <div class="col-auto">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor" class="fas fa-2x text-gray-300" viewBox="0 0 16 16">
-                                  <path d="M14 13.292A8 8 0 0 0 8.5.015v7.778l5.5 5.5zm-.708.708L8.5 9.206v6.778a7.967 7.967 0 0 0 4.792-1.986zM7.5 15.985V9.207L2.708 14A7.967 7.967 0 0 0 7.5 15.985zM2 13.292A8 8 0 0 1 7.5.015v7.778l-5.5 5.5z"/>
-                                </svg>
+            {% if accounts %}
+                <div class="col-xl-4 col-md-6 mb-4">
+                    <div class="card border-left-{% if accounts.category == 'Personal' %}primary{% elif accounts.category == 'Work' %}danger{% elif accounts.category == 'Investments' %}success{% elif accounts.category == 'Children' %}info{% else %}secondary{% endif %} shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <a href="{% url 'dashboard' accounts.id %}">
+                                        <div class="text-xs font-weight-bold text-{% if accounts.category == 'Personal' %}primary{% elif accounts.category == 'Work' %}danger{% elif accounts.category == 'Investments' %}success{% elif accounts.category == 'Children' %}info{% else %}secondary{% endif %} text-uppercase mb-1">
+                                            {{ accounts.name }} - {{ accounts.category }}
+                                        </div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ accounts.currency }}</div>
+                                    </a>
+                                </div>
+                                <div class="col-auto">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor" class="fas fa-2x text-gray-300" viewBox="0 0 16 16">
+                                      <path d="M14 13.292A8 8 0 0 0 8.5.015v7.778l5.5 5.5zm-.708.708L8.5 9.206v6.778a7.967 7.967 0 0 0 4.792-1.986zM7.5 15.985V9.207L2.708 14A7.967 7.967 0 0 0 7.5 15.985zM2 13.292A8 8 0 0 1 7.5.015v7.778l-5.5 5.5z"/>
+                                    </svg>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            {% endif %}
         {% endif %}
     </div>
 </div>
