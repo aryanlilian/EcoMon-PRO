@@ -1,7 +1,7 @@
 {% extends 'users/base.html' %}
 {% block content %}
 <div class="container">
-    <a href="{% url 'add-accounts' %}" class="btn btn-info btn-lg btn-block mb-4">{% if accounts %}Add/Update Accounts{% else %}Add Accounts{% endif %}</a>
+    <a href="{% url 'add-accounts' %}" class="btn btn-info btn-lg btn-block mb-4">{% if accounts %}Add/Delete/Update Accounts{% else %}Add Accounts{% endif %}</a>
     <hr>
     {% if not user.pro_membership and accounts %}
         <div class="alert alert-warning mb-5" role="alert">
