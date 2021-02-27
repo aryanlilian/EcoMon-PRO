@@ -295,7 +295,7 @@ class EmailVerificationView(LoginRequiredMixin, IsEmailVerifiedMixin, View):
         )
         SendEmailThreadMixin(email).start()
         messages.info(request, email_activation['email_sent'])
-        return redirect('dashboard')
+        return redirect('profile')
 
 
 class SendOrVerifyEmailVerificationView(LoginRequiredMixin, View):
@@ -307,10 +307,10 @@ class SendOrVerifyEmailVerificationView(LoginRequiredMixin, View):
             token_generator = EmailTokenGenerator()
             if not token_generator.check_token(user, token):
                 messages.error(request, email_activation['link_used'])
-                return redirect('dashboard')
+                return redirect('profile')
             user.email_verified = True
             user.save()
             messages.success(request, email_activation['email_verified'])
         except Exception as e:
             messages.info(request, 'Something went wrong!')
-        return redirect('dashboard')
+        return redirect('profile')
