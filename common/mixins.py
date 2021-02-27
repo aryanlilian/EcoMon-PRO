@@ -192,3 +192,11 @@ class IsEmailVerifiedMixin(AccessMixin):
         if request.user.email_verified:
             raise Http404()
         return super().dispatch(request, *args, **kwargs)
+
+
+class TotalAccountDashboardMixin(AccessMixin):
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.pro_membership:
+            raise Http404()
+        return super().dispatch(request, *args, **kwargs)

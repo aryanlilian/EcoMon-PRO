@@ -15,7 +15,8 @@ from django.views.generic import (
 )
 from common.mixins import (
     ObjectCreateListViewMixin, ObjectUpdateViewMixin, ObjectDeleteViewMixin,
-    EmailTokenGenerator, IsEmailVerifiedMixin, SendEmailThreadMixin
+    EmailTokenGenerator, IsEmailVerifiedMixin, SendEmailThreadMixin,
+    TotalAccountDashboardMixin
 )
 from .models import (
     Income, Spending, Profile,
@@ -52,7 +53,7 @@ class AccountsListView(LoginRequiredMixin, ListView):
         return super().get_queryset(*args, **kwargs).filter(user=self.request.user).first()
 
 
-class TotalAccountDashboardView(LoginRequiredMixin, View):
+class TotalAccountDashboardView(LoginRequiredMixin, TotalAccountDashboardMixin, View):
     template_name ='users/dashboard.html'
 
     def get(self, request, *args, **kwargs):
