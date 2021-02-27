@@ -10,6 +10,7 @@ from django.core.mail import EmailMessage
 from django.conf import settings
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
+from django.shortcuts import get_object_or_404
 from django.views.generic import (
     CreateView, UpdateView, DeleteView, ListView
 )
@@ -86,7 +87,7 @@ class DashboardView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         date = datetime.now()
-        account = Account.objects.get(id=kwargs['pk'])
+        account = get_object_or_404(Account, id=kwargs['pk'])
         incomes = Income.objects.filter(
             user=request.user, account=account, created_date__year=date.year, created_date__month=date.month
         )
