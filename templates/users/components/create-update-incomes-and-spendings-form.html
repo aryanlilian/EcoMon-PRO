@@ -1,0 +1,54 @@
+{% load widget_tweaks %}
+<form id="form-center" method="POST">
+    {% csrf_token %}
+    <div class="form-row">
+        <div class="form-group col-md-4">
+            {% if not user.email_verified %}
+                {% render_field form.name class="form-control" placeholder=form.name.label readonly=True %}
+            {% else %}
+                {% render_field form.name class="form-control" placeholder=form.name.label %}
+            {% endif %}
+            {% for error in form.name.errors %}
+                <small class="text-xs font-weight text-danger">{{ error }}</small>
+            {% endfor %}
+            {% if not form.name.errors %}
+                <small class="text-xs font-weight text-secondary">{{ form.name.help_text }}</small>
+            {% endif %}
+        </div>
+        <div class="form-group col-md-4">
+            {% if not user.email_verified %}
+                {% render_field form.amount class="form-control" placeholder=form.amount.label readonly=True %}
+            {% else %}
+                {% render_field form.amount class="form-control" placeholder=form.amount.label %}
+            {% endif %}
+            {% for error in form.amount.errors %}
+                <small class="text-xs font-weight text-danger">{{ error }}</small>
+            {% endfor %}
+            {% if not form.amount.errors %}
+                <small class="text-xs font-weight text-secondary">{{ form.amount.help_text }}</small>
+            {% endif %}
+        </div>
+        <div class="form-group col-md-2">
+            {% if not user.email_verified %}
+                {% render_field form.category class="form-control" disabled=True %}
+            {% else %}
+                {% render_field form.category class="form-control" %}
+            {% endif %}
+            <small class="text-xs font-weight text-secondary">{{ form.category.help_text }}</small>
+        </div>
+        <div class="form-group col-md-2">
+            <div class="custom-control custom-checkbox small">
+                {% if not user.email_verified %}
+                    {% render_field form.recurrent class="custom-control-input" id="recurrentObject" disabled=True %}
+                {% else %}
+                    {% render_field form.recurrent class="custom-control-input" id="recurrentObject" %}
+                {% endif %}
+                <label class="custom-control-label ml-2 mt-1" for="recurrentObject">Recurrent {{ title|slice:':-1' }}?</label>
+            </div>
+        </div>
+        <div class="form-group col-md-12">
+            <input type="submit" class="btn btn-{{ color }} btn-lg btn-block" {% if not user.email_verified %}disabled{% endif %}
+            value="{% if '/users/incomes/new/' in request.get_full_path or '/users/spendings/new/' in request.get_full_path %}Add {{ title|slice:':-1' }}{% else %}Update{% endif %}">
+        </div>
+    </div>
+</form>

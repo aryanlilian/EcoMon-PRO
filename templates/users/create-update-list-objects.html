@@ -1,0 +1,65 @@
+{% extends 'users/base.html' %}
+{% block content %}
+	<div class="container">
+		{% if '/users/incomes/new/' in request.get_full_path or '/users/spendings/new/' in request.get_full_path or '/users/incomes/update/' in request.get_full_path or '/users/spendings/update/' in request.get_full_path %}
+			{% include 'users/components/create-update-incomes-and-spendings-form.html' %}
+		{% else %}
+			{% include 'users/components/create-update-accounts-form.html' %}
+		{% endif %}
+		{% if not user.pro_membership and request.get_full_path == '/users/accounts/new/' and objects %}
+			<div class="alert alert-warning mb-5" role="alert">
+				<h4 class="alert-heading">Buy Pro Membership</h4>
+				<p>You have the Free Membership and because of that you can't have more than one account, if you want to add multiple accounts purchase the Pro Membership by clicking the button below!</p>
+				<hr>
+				<a class="btn btn-outline-success btn-sm" href="">Buy Pro Membership</a>
+			</div>
+		{% endif %}
+		<br>
+		<hr>
+
+		{% if '/users/incomes/new/' in request.get_full_path or '/users/spendings/new/' in request.get_full_path or '/users/incomes/update/' in request.get_full_path or '/users/spendings/update/' in request.get_full_path %}
+			<div class="row">
+
+				<div class="col-xl-6 col-md-6 mb-4">
+			        <div class="card border-left-{{ color }} shadow h-100 py-2">
+			            <div class="card-body">
+			                <div class="row no-gutters align-items-center">
+			                    <div class="col mr-2">
+			                        <div class="text-xs font-weight-bold text-{{ color }} text-uppercase mb-1">Current Month {{ title }} ({{ currency }})</div>
+			                        <div class="h5 mb-0 font-weight-bold text-gray-800">{% if total_sum %}{{ total_sum }}{% else %}0.0{% endif %}</div>
+			                    </div>
+			                    <div class="col-auto">
+			                        <i class="fas {% if title == 'Incomes' %} fa-wallet {% elif title == 'Spendings' %} fa-credit-card {% endif %} fa-2x text-gray-300"></i>
+			                    </div>
+			                </div>
+			            </div>
+			        </div>
+			    </div>
+
+			    <div class="col-xl-6 col-md-6 mb-4">
+			        <div class="card border-left-warning shadow h-100 py-2">
+			            <div class="card-body">
+			                <div class="row no-gutters align-items-center">
+			                    <div class="col mr-2">
+			                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Last Month {{ title }} ({{ currency }})</div>
+			                        <div class="h5 mb-0 font-weight-bold text-gray-800">{% if total_sum_last_month %}{{ total_sum_last_month }}{% else %}0.0{% endif %}</div>
+			                    </div>
+			                    <div class="col-auto">
+			                        <i class="fas {% if title == 'Incomes' %} fa-wallet {% elif title == 'Spendings' %} fa-credit-card {% endif %} fa-2x text-gray-300"></i>
+			                    </div>
+			                </div>
+			            </div>
+			        </div>
+			    </div>
+
+			</div>
+		{% endif %}
+
+		{% if '/users/spendings/new/' in request.get_full_path or '/users/spendings/update/' in request.get_full_path %}
+			{% include 'users/components/spendings-list-table.html' %}
+		{% else %}
+			{% include 'users/components/incomes-or-accounts-list-table.html' %}
+		{% endif  %}
+
+	</div>
+{% endblock %}

@@ -32,7 +32,7 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{% url 'dashboard' %}">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{% url 'accounts' %}">
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-laugh-wink"></i>
                 </div>
@@ -44,9 +44,9 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="{% url 'dashboard' %}">
+                <a class="nav-link" href="{% url 'accounts' %}">
                     <i class="fas fa-fw fa-columns-gap"></i>
-                    <span>Dashboard</span></a>
+                    <span>Accounts List</span></a>
             </li>
 
             <!-- Divider -->
@@ -71,10 +71,25 @@
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">All Pages:</h6>
-                        <a class="collapse-item" href="{% url 'profile' %}">Profile</a>
-                        <a class="collapse-item" href="{% url 'incomes' %}">Incomes</a>
-                        <a class="collapse-item" href="{% url 'spendings' %}">Spendings</a>
-                        <a class="collapse-item" href="{% url 'archive' %}">Archive</a>
+                        {% if request.get_full_path != '/users/profile/' %}
+                            <a class="collapse-item" href="{% url 'profile' %}">Profile</a>
+                        {% endif %}
+                        {% if request.get_full_path != '/users/accounts/new/' and request.get_full_path != '/users/accounts/' %}
+                            <a class="collapse-item" href="{% url 'add-accounts' %}">Add Accounts</a>
+                        {% endif %}
+                        {% if request.get_full_path != '/users/dashboard/' and '/users/dashboard/' in request.get_full_path %}
+                            <a class="collapse-item" href="{% url 'incomes' account.id %}">Add Incomes</a>
+                            <a class="collapse-item" href="{% url 'spendings' account.id %}">Add Spendings</a>
+                        {% elif '/users/incomes/new/' in request.get_full_path or '/users/incomes/update/' in request.get_full_path %}
+                            <a class="collapse-item" href="{% url 'dashboard' account.id %}">Dashboard</a>
+                            <a class="collapse-item" href="{% url 'spendings' account.id %}">Add Spendings</a>
+                        {% elif '/users/spendings/new/' in request.get_full_path or '/users/spendings/update/' in request.get_full_path %}
+                            <a class="collapse-item" href="{% url 'dashboard' account.id %}">Dashboard</a>
+                            <a class="collapse-item" href="{% url 'incomes' account.id %}">Add Incomes</a>
+                        {% endif %}
+                        {% if request.get_full_path != '/users/archive/' %}
+                            <a class="collapse-item" href="{% url 'archive' %}">Archive</a>
+                        {% endif %}
                         <a class="collapse-item" href="{% url 'blog' %}">Blog</a>
                         <a class="collapse-item" href="{% url 'contact' %}">Contact</a>
                     </div>
@@ -151,10 +166,10 @@
                                         Profile
                                     </a>
                                 {% endif %}
-                                {% if request.get_full_path != '/users/dashboard/' %}
-                                    <a class="dropdown-item" href="{% url 'dashboard' %}">
+                                {% if request.get_full_path != '/users/accounts/' %}
+                                    <a class="dropdown-item" href="{% url 'accounts' %}">
                                         <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-                                        Dashboard
+                                        Accounts List
                                     </a>
                                 {% endif %}
                                 <div class="dropdown-divider"></div>
@@ -175,7 +190,7 @@
 
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-center mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">{{ title }}</h1>
+                        <h1 class="h3 mb-0 text-gray-800">{{ title }}{% if account %} - {{ account.name }}{% endif %}</h1>
                     </div>
 
                     {% if not user.email_verified %}
@@ -238,6 +253,7 @@
         </div>
     </div>
 
+    {{ account.id|json_script:'accountId' }}
     <script src="{% static 'vendor/jquery/jquery.min.js' %}" type="text/javascript"></script>
     <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}" type="text/javascript"></script>
 
@@ -246,11 +262,11 @@
         <script src="{% static 'js/sb-admin-2.min.js' %}" type="text/javascript"></script>
     {% endif %}
 
-    {% if request.get_full_path == '/users/dashboard/' %}
+    {% if '/users/dashboard/' in request.get_full_path %}
         <script src="{% static 'vendor/chart.js/Chart.min.js' %}" type="text/javascript"></script>
         <script src="{% static 'js/demo/chart-pie-demo.js' %}" type="text/javascript"></script>
         <script src="{% static 'js/demo/chart-area-demo.js' %}" type="text/javascript"></script>
-    {% elif request.get_full_path == '/users/incomes/' or request.get_full_path == '/users/spendings/' or request.get_full_path == '/users/archive/' %}
+    {% elif '/users/incomes/new/' in request.get_full_path or '/users/spendings/new/' in request.get_full_path or '/users/incomes/update/' in request.get_full_path or '/users/spendings/update/' in request.get_full_path or request.get_full_path == '/users/accounts/new/' or request.get_full_path == '/users/archive/' %}
         <script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}" type="text/javascript"></script>
         <script src="{% static 'vendor/datatables/dataTables.bootstrap4.min.js' %}" type="text/javascript"></script>
         <script src="{% static 'js/demo/datatables-demo.js' %}" type="text/javascript"></script>

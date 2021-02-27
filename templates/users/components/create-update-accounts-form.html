@@ -1,0 +1,38 @@
+{% load widget_tweaks %}
+<form id="form-center" method="POST">
+    {% csrf_token %}
+    <div class="form-row">
+        <div class="form-group col-md-7">
+            {% if not user.email_verified or not user.pro_membership and objects and request.get_full_path == '/users/accounts/new/' %}
+                {% render_field form.name class="form-control" placeholder=form.name.label readonly=True %}
+            {% else %}
+                {% render_field form.name class="form-control" placeholder=form.name.label %}
+            {% endif %}
+            {% for error in form.name.errors %}
+                <small class="text-xs font-weight text-danger">{{ error }}</small>
+            {% endfor %}
+            {% if not form.name.errors %}
+                <small class="text-xs font-weight text-secondary">{{ form.name.help_text }}</small>
+            {% endif %}
+        </div>
+        <div class="form-group col-md-3">
+            {% if not user.email_verified or not user.pro_membership and objects and request.get_full_path == '/users/accounts/new/' %}
+                {% render_field form.category class="form-control" disabled=True %}
+            {% else %}
+                {% render_field form.category class="form-control" %}
+            {% endif %}
+            <small class="text-xs font-weight text-secondary">{{ form.category.help_text }}</small>
+        </div>
+        <div class="form-group col-md-2">
+            {% if not user.email_verified or not user.pro_membership and objects and request.get_full_path == '/users/accounts/new/' %}
+                {% render_field form.currency class="form-control" disabled=True %}
+            {% else %}
+                {% render_field form.currency class="form-control" %}
+            {% endif %}
+            <small class="text-xs font-weight text-secondary">{{ form.category.help_text }}</small>
+        </div>
+        <div class="form-group col-md-12">
+            <input type="submit" class="btn {% if request.get_full_path == '/users/accounts/new/' %}btn-info{% else %}btn-success{% endif %} btn-lg btn-block" {% if not user.email_verified or not user.pro_membership and objects and request.get_full_path == '/users/accounts/new/' %}disabled{% endif %} value="{% if request.get_full_path == '/users/accounts/new/' %}Add Account{% else %}Update Account{% endif %}">
+        </div>
+    </div>
+</form>

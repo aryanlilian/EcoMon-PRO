@@ -3,13 +3,16 @@ from datetime import datetime
 from django.views import View
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .models import Income, Spending, User
+from .models import Income, Spending, User, Account
 from django.contrib.auth.mixins import LoginRequiredMixin
 from random import randint
 from django.core.mail import EmailMessage
 from django.conf import settings
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
+from django.views.generic import (
+    CreateView, UpdateView, DeleteView, ListView
+)
 from common.mixins import (
     ObjectCreateListViewMixin, ObjectUpdateViewMixin, ObjectDeleteViewMixin,
     EmailTokenGenerator, IsEmailVerifiedMixin, SendEmailThreadMixin
@@ -19,11 +22,12 @@ from .models import (
 )
 from .forms import (
     UserUpdateForm, ProfileUpdateForm, IncomeCreateForm,
-    SpendingCreateForm
+    SpendingCreateForm, AccountCreateForm
 )
 from common.utils import (
     assembly, percentages_of_incomes, daily_avg,
-    max_amount, uidb_token_generator,
+    max_amount, uidb_token_generator, total_currency_converter,
+    max_currency_converter
 )
 from common.constants import (
     template_titles, help_texts, email_activation,
@@ -31,19 +35,64 @@ from common.constants import (
 )
 
 
+class AccountsListView(LoginRequiredMixin, ListView):
+    model = Account
+    context_object_name = 'accounts'
+    template_name = 'users/accounts.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = template_titles['accounts_title']
+        context['currency'] = Profile.objects.get(user=self.request.user).currency
+        return context
+
+    def get_queryset(self, *args, **kwargs):
+        if self.request.user.pro_membership:
+            return super().get_queryset(*args, **kwargs).filter(user=self.request.user)
+        return super().get_queryset(*args, **kwargs).filter(user=self.request.user).first()
+
+
+class TotalAccountDashboardView(LoginRequiredMixin, View):
+    template_name ='users/dashboard.html'
+
+    def get(self, request, *args, **kwargs):
+        date = datetime.now()
+        accounts = Account.objects.filter(user=request.user)
+        currency = Profile.objects.get(user=request.user).currency
+        total_incomes = total_currency_converter(request.user, Income, accounts, currency, date.year, date.month)
+        total_spendings = total_currency_converter(request.user, Spending, accounts, currency, date.year, date.month)
+        total_savings = round(total_incomes - total_spendings, 2)
+        spendings_percent = percentages_of_incomes(total_incomes, total_spendings)
+        savings_percent = percentages_of_incomes(total_incomes, total_savings)
+        max_income = max_currency_converter(request.user, Income, accounts, currency, date.year, date.month)
+        max_spending = max_currency_converter(request.user, Spending, accounts, currency, date.year, date.month)
+        context = {
+            'title': template_titles['dashboard_title'],
+            'currency': currency,
+            'total_incomes': total_incomes,
+            'total_spendings': total_spendings,
+            'total_savings': total_savings,
+            'spendings_percent': spendings_percent ,
+            'savings_percent': savings_percent,
+            'max_income': max_income,
+            'max_spending': max_spending,
+        }
+        return render(request, self.template_name, context)
+
 
 class DashboardView(LoginRequiredMixin, View):
     template_name ='users/dashboard.html'
 
-    def get(self, request):
+    def get(self, request, *args, **kwargs):
         date = datetime.now()
+        account = Account.objects.get(id=kwargs['pk'])
         incomes = Income.objects.filter(
-            user=request.user, created_date__year=date.year, created_date__month=date.month
+            user=request.user, account=account, created_date__year=date.year, created_date__month=date.month
         )
         spendings = Spending.objects.filter(
-            user=request.user, created_date__year=date.year, created_date__month=date.month
+            user=request.user, account=account, created_date__year=date.year, created_date__month=date.month
         )
-        currency = Profile.objects.get(user=self.request.user).currency
+        currency = account.currency
         total_incomes, total_spendings = assembly(incomes), assembly(spendings)
         total_savings = total_incomes - total_spendings
         spendings_percent = percentages_of_incomes(total_incomes, total_spendings)
@@ -51,6 +100,7 @@ class DashboardView(LoginRequiredMixin, View):
         max_income, max_spending = max_amount(incomes), max_amount(spendings)
         context = {
             'title': template_titles['dashboard_title'],
+            'account' : account,
             'incomes': incomes,
             'spendings': spendings,
             'currency': currency,
@@ -124,13 +174,44 @@ class SpendingsCreateListView(LoginRequiredMixin, ObjectCreateListViewMixin):
     color = 'danger'
 
 
+class AccountCreateView(LoginRequiredMixin, CreateView):
+    model = Account
+    form_class = AccountCreateForm
+    template_name = 'users/create-update-list-objects.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['objects'] = Account.objects.filter(user=self.request.user) if self.request.user.pro_membership else Account.objects.filter(user=self.request.user).first()
+        return context
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+
+class AccountUpdateView(LoginRequiredMixin, UpdateView):
+    model = Account
+    template_name = 'users/create-update-list-objects.html'
+    fields = ['name', 'category', 'currency']
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['objects'] = Account.objects.filter(user=self.request.user)
+        return context
+
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset(*args, **kwargs).filter(user=self.request.user)
+
+
 class IncomeUpdateView(ObjectUpdateViewMixin):
     model = Income
     model_name = template_titles['incomes_title']
 
+
 class SpendingUpdateView(ObjectUpdateViewMixin):
     model = Spending
     model_name = template_titles['spendings_title']
+
 
 class IncomeDeleteView(ObjectDeleteViewMixin):
     model = Income
@@ -144,43 +225,54 @@ class SpendingDeleteView(ObjectDeleteViewMixin):
 
 class ArchiveView(LoginRequiredMixin, View):
     template_name = 'users/archive.html'
+    incomes = spendings = accounts = account = None
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
-        incomes = Income.objects.filter(user=request.user)
-        spendings = Spending.objects.filter(user=request.user)
-        total_incomes, total_spendings = assembly(incomes), assembly(spendings)
-        context['incomes'] = incomes
-        context['spendings'] = spendings
+        total_incomes = total_spendings = None
+        if request.user.pro_membership:
+            total_incomes = total_currency_converter(request.user, Income, self.accounts, context['currency'])
+            total_spendings = total_currency_converter(request.user, Spending, self.accounts, context['currency'])
+        else:
+            total_incomes, total_spendings = assembly(self.incomes), assembly(self.spendings)
         context['total_incomes'] = total_incomes
         context['total_spendings'] = total_spendings
-        context['total_savings'] = total_incomes - total_spendings
+        context['total_savings'] = round(total_incomes - total_spendings, 2)
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
+        self.account = Account.objects.get(id=request.POST.get('accountId')) if request.user.pro_membership else Account.objects.filter(user=request.user).first()
         year = datetime.strptime(request.POST.get('year'), '%Y')
         month = datetime.strptime(request.POST.get('month'), '%m')
-        incomes = Income.objects.filter(
-            user=request.user, created_date__year=year.year, created_date__month=month.month
+        self.incomes = Income.objects.filter(
+            user=request.user, account=self.account, created_date__year=year.year, created_date__month=month.month
         )
-        spendings = Spending.objects.filter(
-            user=request.user, created_date__year=year.year, created_date__month=month.month
+        self.spendings = Spending.objects.filter(
+            user=request.user, account=self.account, created_date__year=year.year, created_date__month=month.month
         )
-        total_incomes, total_spendings = assembly(incomes), assembly(spendings)
-        context['incomes'] = incomes
-        context['spendings'] = spendings
+        total_incomes, total_spendings = assembly(self.incomes), assembly(self.spendings)
+        context['currency'] = self.account.currency
+        context['incomes'] = self.incomes
+        context['spendings'] = self.spendings
         context['total_incomes'] = total_incomes
         context['total_spendings'] = total_spendings
-        context['total_savings'] = total_incomes - total_spendings
+        context['total_savings'] = round(total_incomes - total_spendings, 2)
         context['year'] = year
         context['month'] = month
         return render(request, self.template_name, context)
 
     def get_context_data(self, **kwargs):
+        self.accounts = Account.objects.filter(user=self.request.user) if self.request.user.pro_membership else None
+        self.account = Account.objects.filter(user=self.request.user).first() if not self.request.user.pro_membership else Account.objects.filter(user=self.request.user)
+        self.incomes = Income.objects.filter(user=self.request.user) if self.request.user.pro_membership else Income.objects.filter(user=self.request.user, account=self.account)
+        self.spendings = Spending.objects.filter(user=self.request.user) if self.request.user.pro_membership else Spending.objects.filter(user=self.request.user, account=self.account)
         context = {
-            'currency': Profile.objects.get(user=self.request.user).currency,
-            'title' : template_titles['archive_title']
+            'currency': Profile.objects.get(user=self.request.user).currency if self.accounts else self.account.currency,
+            'title' : template_titles['archive_title'],
+            'accounts' : self.accounts,
+            'incomes' : self.incomes,
+            'spendings' : self.spendings
         }
         return context
 

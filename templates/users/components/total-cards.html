@@ -1,0 +1,75 @@
+<!-- Content row -->
+<div class="row">
+    <!-- Incomes Card -->
+    <div class="col-xl-4 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            {% if '/users/dashboard/' in request.get_full_path %}
+                                Incomes ({{ currency }}) Monthly
+                            {% else %}
+                                Total Archive Incomes ({{ currency }})
+                            {% endif %}
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{% if total_incomes %}{{ total_incomes }}{% else %}0.0{% endif %}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-wallet fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Spending card -->
+    <div class="col-xl-4 col-md-6 mb-4">
+        <div class="card border-left-danger shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                            {% if '/users/dashboard/' in request.get_full_path %}
+                                Spendings ({{ currency }}) Monthly
+                            {% else %}
+                                Total Archive Spendings ({{ currency }})
+                            {% endif %}
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{% if total_spendings %}{{ total_spendings }}{% else %}0.0{% endif %}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-credit-card fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Savings Card -->
+    <div class="col-xl-4 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            {% if '/users/dashboard/' in request.get_full_path %}
+                                Savings ({{ currency }}) Monthly
+                            {% else %}
+                                Total Archive Savings  ({{ currency }})
+                            {% endif %}
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{% if total_savings %}{{ total_savings }}{% else %}0.0{% endif %}</div>
+                    </div>
+                    <div class="col-auto">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor" class="fas fa-dollar-sign fa-2x text-gray-300" viewBox="0 0 16 16">
+                             <path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/>
+                             <path d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V5zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2H3z"/>
+                       </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

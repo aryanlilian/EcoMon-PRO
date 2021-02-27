@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.utils.translation import ugettext_lazy as _
-from .models import User, Income, Spending, Profile
+from .models import User, Income, Spending, Profile, Account
 from phonenumber_field.modelfields import PhoneNumberField
 from django.contrib.auth import authenticate
 from django.core.exceptions import ValidationError
@@ -137,6 +137,7 @@ class IncomeCreateForm(forms.ModelForm):
         model = Income
         exclude = [
             'user',
+            'account',
             'created_date'
         ]
 
@@ -165,5 +166,22 @@ class SpendingCreateForm(forms.ModelForm):
         model = Spending
         exclude = [
             'user',
+            'account',
             'created_date'
+        ]
+
+
+class AccountCreateForm(forms.ModelForm):
+    name = forms.CharField(
+        max_length = 200,
+        label = 'Name',
+        help_text = help_texts['obj_name']
+    )
+
+    class Meta:
+        model = Account
+        exclude = [
+            'user',
+            'created_date',
+            'updated_date'
         ]

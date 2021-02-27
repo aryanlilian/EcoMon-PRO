@@ -2,12 +2,17 @@
 Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
 Chart.defaults.global.defaultFontColor = '#858796';
 
-// Pie Chart Example
-let incomes_pie = {
+var accountId = JSON.parse(document.getElementById('accountId').textContent);
+let incomesPie = {
     'names': [],
     'values': [],
 }
-let incomesChartPieURL = '/users/dashboard/incomes-chart-pie/'
+
+if(accountId) {
+    var incomesChartPieURL = `/users/dashboard/incomes-chart-pie/${accountId}/`
+} else {
+    var incomesChartPieURL = `/users/dashboard/incomes-chart-pie/`
+}
 
 $.ajax({
     method: 'GET',
@@ -16,8 +21,8 @@ $.ajax({
         for (let i in response) {
             let key = Object.keys(response[i])[0]
             let value = Object.values(response[i])[0]
-            incomes_pie.names.push(key)
-            incomes_pie.values.push(value)
+            incomesPie.names.push(key)
+            incomesPie.values.push(value)
         }
         buildIncomesChartPie()
     }
@@ -27,9 +32,9 @@ function buildIncomesChartPie() {
     let myPieChart = new Chart(ctx, {
         type: 'doughnut',
         data: {
-            labels: incomes_pie.names,
+            labels: incomesPie.names,
             datasets: [{
-                data: incomes_pie.values,
+                data: incomesPie.values,
                 backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#e63900', '#7e98e7',
                 '#4de6ad', '#85d4e0', '#ff6633', '#a9baef', '#a6f2d6', '#ade2eb', '#ffb399'],
                 hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf', '#b32d00', '#5376df',
@@ -62,12 +67,16 @@ function buildIncomesChartPie() {
 Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
 Chart.defaults.global.defaultFontColor = '#858796';
 
-// Pie Chart Example
-let spendings_pie = {
+let spendingsPie = {
     'names': [],
     'values': [],
 }
-let spendingsChartPieURL = '/users/dashboard/spendings-chart-pie/'
+
+if(accountId) {
+    var spendingsChartPieURL = `/users/dashboard/spendings-chart-pie/${accountId}/`
+} else {
+    var spendingsChartPieURL = `/users/dashboard/spendings-chart-pie/`
+}
 
 $.ajax({
     method: 'GET',
@@ -76,8 +85,8 @@ $.ajax({
         for (let i in response) {
             let key = Object.keys(response[i])[0]
             let value = Object.values(response[i])[0]
-            spendings_pie.names.push(key)
-            spendings_pie.values.push(value)
+            spendingsPie.names.push(key)
+            spendingsPie.values.push(value)
         }
         buildSpendingsChartPie()
     }
@@ -87,9 +96,9 @@ function buildSpendingsChartPie() {
     let myPieChart = new Chart(ctx, {
         type: 'doughnut',
         data: {
-            labels: spendings_pie.names,
+            labels: spendingsPie.names,
             datasets: [{
-                data: spendings_pie.values,
+                data: spendingsPie.values,
                 backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#e63900', '#7e98e7',
                 '#4de6ad', '#85d4e0', '#ff6633', '#a9baef'],
                 hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf', '#b32d00', '#5376df',

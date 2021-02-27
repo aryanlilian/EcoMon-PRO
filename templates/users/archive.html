@@ -3,18 +3,30 @@
 	<div class="container">
 		<form method="POST" action="{% url 'archive' %}">
 			{% csrf_token %}
+			{% if user.pro_membership %}
+				<div class="input-group mb-3">
+				  <select name="accountId" class="custom-select text-gray-800" id="inputGroupSelect01">
+					{% for account in accounts %}
+				    	<option value="{{ account.id }}">{{ account.name }}</option>
+				    {% endfor %}
+				  </select>
+				  <div class="input-group-append">
+				    <label class="input-group-text text-gray-800 bg-info" for="inputGroupSelect01">Account</label>
+				  </div>
+				</div>
+			{% endif %}
 			<div class="input-group mb-3">
 			  <div class="input-group-prepend">
-			    <label class="input-group-text text-gray-800 bg-warning" for="inputGroupSelect01">Year</label>
+			    <label class="input-group-text text-gray-800 bg-warning" for="inputGroupSelect02">Year</label>
 			  </div>
-			  <select name="year" class="custom-select text-gray-800" id="inputGroupSelect01">
+			  <select name="year" class="custom-select text-gray-800" id="inputGroupSelect02">
 			    <option value="2021">2021</option>
 			    <option value="2022">2022</option>
 			    <option value="2023">2023</option>
 			  </select>
 			</div>
 			<div class="input-group mb-3">
-			  <select name="month" class="custom-select text-gray-800 id="inputGroupSelect02">
+			  <select name="month" class="custom-select text-gray-800 id="inputGroupSelect03">
 			    <option value="01">January</option>
 			    <option value="02">February</option>
 			    <option value="03">March</option>
@@ -29,179 +41,17 @@
 			    <option value="12">December</option>
 			  </select>
 			  <div class="input-group-append">
-			    <label class="input-group-text text-gray-800 bg-success" for="inputGroupSelect02">Month</label>
+			    <label class="input-group-text text-gray-800 bg-success" for="inputGroupSelect03">Month</label>
 			  </div>
 			</div>
 			<input type="submit" name="result" value="See the Archive" class="btn btn-info btn-lg btn-block">
 		</form>
 		<br>
 		<hr>
-		<!-- Content Row -->
-		<div class="row">
 
-			<div class="col-xl-4 col-md-6 mb-4">
-		        <div class="card border-left-primary shadow h-100 py-2">
-		            <div class="card-body">
-		                <div class="row no-gutters align-items-center">
-		                    <div class="col mr-2">
-		                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Archive Incomes ({{ currency }})</div>
-		                        {% if total_incomes %}
-		                        	<div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_incomes }}</div>
-		                        {% else %}
-		                        	<div class="h5 mb-0 font-weight-bold text-gray-800">0.0</div>
-		                        {% endif %}
-		                    </div>
-		                    <div class="col-auto">
-		                        <i class="fas fa-wallet fa-2x text-gray-300"></i>
-		                    </div>
-		                </div>
-		            </div>
-		        </div>
-		    </div>
-
-		    <div class="col-xl-4 col-md-6 mb-4">
-		        <div class="card border-left-danger shadow h-100 py-2">
-		            <div class="card-body">
-		                <div class="row no-gutters align-items-center">
-		                    <div class="col mr-2">
-		                        <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Total Archive Spendings ({{ currency }})</div>
-		                        {% if total_spendings %}
-		                        	<div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_spendings }}</div>
-		                        {% else %}
-		                        	<div class="h5 mb-0 font-weight-bold text-gray-800">0.0</div>
-		                        {% endif %}
-		                    </div>
-		                    <div class="col-auto">
-		                        <i class="fas fa-credit-card fa-2x text-gray-300"></i>
-		                    </div>
-		                </div>
-		            </div>
-		        </div>
-		    </div>
-
-		    <div class="col-xl-4 col-md-6 mb-4">
-		        <div class="card border-left-success shadow h-100 py-2">
-		            <div class="card-body">
-		                <div class="row no-gutters align-items-center">
-		                    <div class="col mr-2">
-		                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total Archive Savings  ({{ currency }})</div>
-		                        {% if total_savings %}
-		                        	<div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_savings }}</div>
-		                        {% else %}
-		                        	<div class="h5 mb-0 font-weight-bold text-gray-800">0.0</div>
-		                        {% endif %}
-		                    </div>
-		                    <div class="col-auto">
-		                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
-		                    </div>
-		                </div>
-		            </div>
-		        </div>
-		    </div>
-
-		</div>
-
-		<div class="card shadow mb-4">
-            <div class="card-header py-3">
-            	{% if year and month %}
-            		<h6 class="m-0 font-weight-bold text-primary">Incomes - {{ year.year }}/{{ month.month }}</h6>
-            	{% else %}
-            		<h6 class="m-0 font-weight-bold text-primary">Incomes</h6>
-            	{% endif %}
-            </div>
-            <div class="card-body">
-              <div class="table-responsive">
-                <table class="table table-bordered" id="incomesArchiveDataTable" width="100%" cellspacing="0">
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-                      <th>Amount</th>
-                      <th>Category</th>
-                      <th>Recurrent</th>
-                      <th>Date</th>
-                    </tr>
-                  </thead>
-                  <tfoot>
-                    <tr>
-                      <th>Name</th>
-                      <th>Amount</th>
-                      <th>Category</th>
-                      <th>Recurrent</th>
-                      <th>Date</th>
-                    </tr>
-                  </tfoot>
-                  <tbody>
-                    {% for income in incomes %}
-                    	<div class="row">
-                    		<tr>
-                				<td>{{ income.name }}</td>
-                				<td>{{ income.amount }}</td>
-                				<td>{{ income.category }}</td>
-	                    		{% if income.recurrent == True %}
-                    				<td>Yes</td>
-	                    		{% else %}
-                    				<td>No</td>
-	                    		{% endif %}
-                    			<td>{{ income.created_date|date:"F-m-Y" }}</td>
-	                    	</tr>
-                    	</div>
-                    {% endfor %}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-
-          <div class="card shadow mb-4">
-            <div class="card-header py-3">
-            	{% if year and month %}
-            		<h6 class="m-0 font-weight-bold text-danger">Spendings - {{ year.year }}/{{ month.month }}</h6>
-            	{% else %}
-            		<h6 class="m-0 font-weight-bold text-danger">Spendings</h6>
-            	{% endif %}
-            </div>
-            <div class="card-body">
-              <div class="table-responsive">
-                <table class="table table-bordered" id="spendingsArchiveDataTable" width="100%" cellspacing="0">
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-                      <th>Amount</th>
-                      <th>Category</th>
-                      <th>Recurrent</th>
-                      <th>Date</th>
-                    </tr>
-                  </thead>
-                  <tfoot>
-                    <tr>
-                      <th>Name</th>
-                      <th>Amount</th>
-                      <th>Category</th>
-                      <th>Recurrent</th>
-                      <th>Date</th>
-                    </tr>
-                  </tfoot>
-                  <tbody>
-                    {% for spending in spendings %}
-                    	<div class="row">
-                    		<tr>
-                				<td>{{ spending.name }}</td>
-                				<td>{{ spending.amount }}</td>
-                				<td>{{ spending.category }}</td>
-	                    		{% if spending.recurrent == True %}
-                    				<td>Yes</td>
-	                    		{% else %}
-                    				<td>No</td>
-	                    		{% endif %}
-                    			<td>{{ spending.created_date|date:"F-d-Y" }}</td>
-	                    	</tr>
-                    	</div>
-                    {% endfor %}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
+		{% include 'users/components/total-cards.html' %}
+		{% include 'users/components/incomes-or-accounts-list-table.html' %}
+		{% include 'users/components/spendings-list-table.html' %}
 
         </div>
 {% endblock content %}

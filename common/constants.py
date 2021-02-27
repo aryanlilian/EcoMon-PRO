@@ -67,6 +67,7 @@ template_titles = {
     'about_path' : 'home / about',
     'contact_title' : 'Contact',
     'contact_path' : 'home / contact',
+    'accounts_title' : 'Accounts',
     'dashboard_title' : 'Dashboard',
     'incomes_title' : 'Incomes',
     'spendings_title' : 'Spendings',

@@ -148,8 +148,8 @@
                                    </div>
                                </div>
                                 <div class="form-group col-md-4">
-                                    <label for="currency">Currency</label>
-                                    {% if not user.email_verified %}
+                                    <label for="currency">Total Account Currency</label>
+                                    {% if not user.email_verified or not user.pro_membership %}
                                         {% render_field profile_update_form.currency id="currency" class="form-control" disabled=True %}
                                     {% else %}
                                         {% render_field profile_update_form.currency id="currency" class="form-control" %}

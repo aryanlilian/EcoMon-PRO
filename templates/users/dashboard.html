@@ -1,211 +1,52 @@
 {% extends 'users/base.html' %}
 {% block content %}
 
-{% if messages %}
-    {% for message in messages %}
-        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
-          {{ message }}
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-    {% endfor %}
-{% endif %}
-<!-- Content row -->
-<div class="row">
-    <!-- Incomes Card -->
-    <div class="col-xl-4 col-md-6 mb-4">
-        <div class="card border-left-primary shadow h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Incomes ({{ currency }}) Monthly</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">{% if total_incomes %}{{ total_incomes }}{% else %}0.0{% endif %}</div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-wallet fa-2x text-gray-300"></i>
-                    </div>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% include 'users/components/total-cards.html' %}
+    
+    <!-- Content row -->
+    <div class="row">
+
+        <!-- Incomes Area Chart -->
+        <div class="col-xl-8 col-lg-7">
+            <div class="card shadow mb-4">
+                <!-- Card Header - Dropdown -->
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Incomes Overview</h6>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Spending card -->
-    <div class="col-xl-4 col-md-6 mb-4">
-        <div class="card border-left-danger shadow h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Spendings ({{ currency }}) Monthly</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">{% if total_spendings %}{{ total_spendings }}{% else %}0.0{% endif %}</div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-credit-card fa-2x text-gray-300"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Savings Card -->
-    <div class="col-xl-4 col-md-6 mb-4">
-        <div class="card border-left-success shadow h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Savings ({{ currency }}) Monthly</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">{% if total_savings %}{{ total_savings }}{% else %}0.0{% endif %}</div>
-                    </div>
-                    <div class="col-auto">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor" class="fas fa-dollar-sign fa-2x text-gray-300" viewBox="0 0 16 16">
-                             <path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/>
-                             <path d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V5zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2H3z"/>
-                       </svg>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-</div>
-
-<!-- Content row -->
-<div class="row">
-
-    <!-- Incomes Area Chart -->
-    <div class="col-xl-8 col-lg-7">
-        <div class="card shadow mb-4">
-            <!-- Card Header - Dropdown -->
-            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Incomes Overview</h6>
-            </div>
-            <!-- Card Body -->
-            <div class="card-body">
-                <div class="chart-area">
-                    <canvas id="incomesAreaChart"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Incomes Pie Chart -->
-    <div class="col-xl-4 col-lg-5">
-        <div class="card shadow mb-4">
-            <!-- Card Header - Dropdown -->
-            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Incomes Categories</h6>
-            </div>
-            <!-- Card Body -->
-            <div class="card-body">
-                <div class="chart-pie pt-4 pb-2">
-                    <canvas id="incomesPieChart"></canvas>
-                </div>
-                <div class="mt-4 text-center small">
-                    <br>
-                </div>
-            </div>
-        </div>
-    </div>
-
-</div>
-
-<!-- Content Row -->
-<div class="row">
-
-    <!-- Spendings Area Chart -->
-    <div class="col-xl-8 col-lg-7">
-        <div class="card shadow mb-4">
-            <!-- Card Header - Dropdown -->
-            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-danger">Spendings Overview</h6>
-            </div>
-            <!-- Card Body -->
-            <div class="card-body">
-                <div class="chart-area">
-                    <canvas id="spendingsAreaChart"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Spendings Pie Chart -->
-    <div class="col-xl-4 col-lg-5">
-        <div class="card shadow mb-4">
-            <!-- Card Header - Dropdown -->
-            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Spendings Categories</h6>
-            </div>
-            <!-- Card Body -->
-            <div class="card-body">
-                <div class="chart-pie pt-4 pb-2">
-                    <canvas id="spendingsPieChart"></canvas>
-                </div>
-                <div class="mt-4 text-center small">
-                    <br>
-                </div>
-            </div>
-        </div>
-    </div>
-
-</div>
-
-<!-- Content Row -->
-<div class="row">
-
-    <!-- Content Column -->
-    <div class="col-lg-6 mb-4">
-
-        <!-- Percentages Card -->
-        <div class="card shadow mb-4">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Spendings & Savings % from Incomes</h6>
-            </div>
-            <div class="card-body">
-                <h4 class="small font-weight-bold">Spendings <span class="float-right">{{ spendings_percent }}%</span></h4>
-                <div class="progress mb-4">
-                    <div class="progress-bar bg-danger" role="progressbar" style="width: {{ spendings_percent }}%" aria-valuenow="{{ spendings_percent }}"
-                        aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-                <h4 class="small font-weight-bold">Savings <span class="float-right">{{ savings_percent }}%</span></h4>
-                <div class="progress mb-4">
-                    <div class="progress-bar bg-success" role="progressbar" style="width: {{ savings_percent }}%" aria-valuenow="{{ savings_percent }}"
-                        aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-lg-6 mb-4">
-
-        <!-- Highets Income Card -->
-        <div class="col-xl-12 col-md-12 mb-4">
-            <div class="card border-left-primary shadow h-100 py-1">
+                <!-- Card Body -->
                 <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Highest Income of the month ({{ currency }})</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{% if max_income %}{{ max_income }}{% else %}0.0{% endif %}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-wallet fa-2x text-gray-300"></i>
-                        </div>
+                    <div class="chart-area">
+                        <canvas id="incomesAreaChart"></canvas>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Highest Spendings Card -->
-        <div class="col-xl-12 col-md-12 mb-4">
-            <div class="card border-left-danger shadow h-100 py-1">
+        <!-- Incomes Pie Chart -->
+        <div class="col-xl-4 col-lg-5">
+            <div class="card shadow mb-4">
+                <!-- Card Header - Dropdown -->
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Incomes Categories</h6>
+                </div>
+                <!-- Card Body -->
                 <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Highest Spending of the month ({{ currency }})</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{% if max_spending %}{{ max_spending }}{% else %}0.0{% endif %}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-credit-card fa-2x text-gray-300"></i>
-                        </div>
+                    <div class="chart-pie pt-4 pb-2">
+                        <canvas id="incomesPieChart"></canvas>
+                    </div>
+                    <div class="mt-4 text-center small">
+                        <br>
                     </div>
                 </div>
             </div>
@@ -213,5 +54,109 @@
 
     </div>
 
-</div>
+    <!-- Content Row -->
+    <div class="row">
+
+        <!-- Spendings Area Chart -->
+        <div class="col-xl-8 col-lg-7">
+            <div class="card shadow mb-4">
+                <!-- Card Header - Dropdown -->
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-danger">Spendings Overview</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <div class="chart-area">
+                        <canvas id="spendingsAreaChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Spendings Pie Chart -->
+        <div class="col-xl-4 col-lg-5">
+            <div class="card shadow mb-4">
+                <!-- Card Header - Dropdown -->
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Spendings Categories</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <div class="chart-pie pt-4 pb-2">
+                        <canvas id="spendingsPieChart"></canvas>
+                    </div>
+                    <div class="mt-4 text-center small">
+                        <br>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Content Row -->
+    <div class="row">
+
+        <!-- Content Column -->
+        <div class="col-lg-6 mb-4">
+
+            <!-- Percentages Card -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Spendings & Savings % from Incomes</h6>
+                </div>
+                <div class="card-body">
+                    <h4 class="small font-weight-bold">Spendings <span class="float-right">{{ spendings_percent }}%</span></h4>
+                    <div class="progress mb-4">
+                        <div class="progress-bar bg-danger" role="progressbar" style="width: {{ spendings_percent }}%" aria-valuenow="{{ spendings_percent }}"
+                            aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <h4 class="small font-weight-bold">Savings <span class="float-right">{{ savings_percent }}%</span></h4>
+                    <div class="progress mb-4">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: {{ savings_percent }}%" aria-valuenow="{{ savings_percent }}"
+                            aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 mb-4">
+
+            <!-- Highets Income Card -->
+            <div class="col-xl-12 col-md-12 mb-4">
+                <div class="card border-left-primary shadow h-100 py-1">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Highest Income of the month ({{ currency }})</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{% if max_income %}{{ max_income }}{% else %}0.0{% endif %}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-wallet fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Highest Spendings Card -->
+            <div class="col-xl-12 col-md-12 mb-4">
+                <div class="card border-left-danger shadow h-100 py-1">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Highest Spending of the month ({{ currency }})</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{% if max_spending %}{{ max_spending }}{% else %}0.0{% endif %}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-credit-card fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
 {% endblock %}

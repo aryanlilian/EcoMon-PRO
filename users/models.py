@@ -123,16 +123,32 @@ class Account(models.Model):
         USD = 'USD', _('USD')
         ZAR = 'ZAR', _('ZAR')
 
+    class Category(models.TextChoices):
+        PERSONAL = _('Personal')
+        WORK = _('Work')
+        INVESTMENTS = _('Investments')
+        CHILDREN = _('Children')
+        OTHER = _('Other')
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    name = models.CharField(_('Name'), max_length=200)
+    name = models.CharField(_('Name'), max_length=200, unique=True)
     created_date = models.DateTimeField(_('Created Date/Time'), auto_now_add=True)
     updated_date = models.DateTimeField(_('Updated Date/Time'), auto_now=True)
+    category = models.CharField(
+        _('Category'), max_length=11, choices=Category.choices, default=Category.PERSONAL
+    )
     currency = models.CharField(
         _('Currency'), max_length=3, choices=Currency.choices, default=Currency.USD
     )
 
     def __str__(self):
         return f'{self.name} - {self.currency}'
+
+    def get_absolute_url(self):
+        return reverse('add-accounts')
+
+    def update_url(self):
+        return reverse('update-account', kwargs={'pk' : self.pk})
 
 
 class Income(models.Model):
@@ -153,6 +169,7 @@ class Income(models.Model):
         OTHERS = _('Others')
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    account = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='incomes')
     name = models.CharField(_('Name'), max_length=100)
     amount = models.DecimalField(_('Amount'), max_digits=10, decimal_places=3)
     recurrent = models.BooleanField(_('Recurrent Income'), default=False)
@@ -168,10 +185,10 @@ class Income(models.Model):
         return f'{self.name} - {self.user.username}'
 
     def get_absolute_url(self):
-        return reverse('incomes')
+        return reverse('incomes', kwargs={'pk' : self.account.pk})
 
     def update_url(self):
-        return reverse('update-income', kwargs={'pk': self.pk})
+        return reverse('update-income', kwargs={'pk': self.pk, 'id' : self.account.pk})
 
     def delete_url(self):
         return reverse('delete-income', kwargs={'pk': self.pk})
@@ -191,6 +208,7 @@ class Spending(models.Model):
         OTHERS = _('Others')
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    account = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='spendings')
     name = models.CharField(_('Name'), max_length=50)
     amount = models.DecimalField(_('Amount'), max_digits=10, decimal_places=3)
     recurrent = models.BooleanField(_('Recurrent Spending'), default=False)
@@ -206,10 +224,10 @@ class Spending(models.Model):
         return f'{self.name} - {self.user.username}'
 
     def get_absolute_url(self):
-        return reverse('spendings')
+        return reverse('spendings', kwargs={'pk' : self.account.pk})
 
     def update_url(self):
-        return reverse('update-spending', kwargs={'pk': self.pk})
+        return reverse('update-spending', kwargs={'pk': self.pk, 'id': self.account.pk})
 
     def delete_url(self):
         return reverse('delete-spending', kwargs={'pk': self.pk})

@@ -188,7 +188,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 LOGIN_URL = 'login'
 
-LOGIN_REDIRECT_URL = 'dashboard'
+LOGIN_REDIRECT_URL = 'profile'
 
 EMAIL_HOST = os.environ.get('EMAIL_HOST')
 

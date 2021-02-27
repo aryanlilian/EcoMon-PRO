@@ -6,7 +6,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from six import text_type
 from threading import Thread
-from users.models import Profile
+from users.models import Profile, Account
 from django.http import Http404
 from .utils import (
     assembly, percentages_of_incomes, days_of_month,
@@ -20,39 +20,45 @@ class ObjectCreateListViewMixin(CreateView):
     form_class = None
     model_name = None
     color = None
-    template_name = 'users/incomes_and_spendings.html'
+    template_name = 'users/create-update-list-objects.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         date = datetime.now()
+        account = Account.objects.get(id=self.kwargs['pk'])
         obj = self.model.objects.filter(
             user=self.request.user,
+            account=account,
             created_date__year=date.year,
             created_date__month=date.month
         )
         recurrent_obj = self.model.objects.filter(
             user=self.request.user, recurrent=True,
+            account=account,
             created_date__year=date.year,
             created_date__month=date.month
         )
-        currency = Profile.objects.get(user=self.request.user).currency
+        currency = account.currency
         if date.month == 1:
             obj_last_month = self.model.objects.filter(
                 user=self.request.user,
+                account=account,
                 created_date__year=date.year - 1,
                 created_date__month=date.month + 11
             )
         else:
             obj_last_month = self.model.objects.filter(
                 user=self.request.user,
+                account=account,
                 created_date__year=date.year,
                 created_date__month=date.month - 1
             )
         total_obj = assembly(obj)
         total_obj_last_month = assembly(obj_last_month)
-        check_recurrent_or_new(self.request.user, recurrent_obj, self.model)
+        check_recurrent_or_new(self.request.user, recurrent_obj, self.model, account)
         context['title'] = self.model_name
         context['color'] = self.color
+        context['account'] = account
         context['objects'] = obj
         context['total_sum'] = total_obj
         context['currency'] = currency
@@ -61,47 +67,56 @@ class ObjectCreateListViewMixin(CreateView):
         return context
 
     def form_valid(self, form):
+        account = Account.objects.get(id=self.kwargs['pk'])
         form.instance.user = self.request.user
+        form.instance.account = account
         return super().form_valid(form)
 
 
 class ObjectUpdateViewMixin(LoginRequiredMixin, UpdateView):
     model = None
-    template_name = 'users/incomes_and_spendings.html'
+    template_name = 'users/create-update-list-objects.html'
     fields = ['name', 'amount', 'category', 'recurrent']
     model_name = None
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        account = Account.objects.get(id=self.kwargs['id'])
         date = datetime.now()
         obj = self.model.objects.filter(
             user=self.request.user,
+            account=account,
             created_date__year=date.year,
             created_date__month=date.month
         )
         recurrent_objs = self.model.objects.filter(
-            user=self.request.user, recurrent=True,
+            user=self.request.user,
+            account=account,
+            recurrent=True,
             created_date__year=date.year,
             created_date__month=date.month
         )
-        currency = Profile.objects.get(user=self.request.user).currency
+        currency = account.currency
         if date.month == 1:
             obj_last_month = self.model.objects.filter(
                 user=self.request.user,
+                account=account,
                 created_date__year=date.year - 1,
                 created_date__month=date.month + 11
             )
         else:
             obj_last_month = self.model.objects.filter(
                 user=self.request.user,
+                account=account,
                 created_date__year=date.year,
                 created_date__month=date.month - 1
             )
         total_obj = assembly(obj)
         total_obj_last_month = assembly(obj_last_month)
-        check_recurrent_or_new(self.request.user, recurrent_objs, self.model)
+        check_recurrent_or_new(self.request.user, recurrent_objs, self.model, account)
         context['title'] = self.model_name
         context['color'] = 'success'
+        context['account'] = account
         context['objects'] = obj
         context['total_sum'] = total_obj
         context['currency'] = currency
@@ -111,12 +126,14 @@ class ObjectUpdateViewMixin(LoginRequiredMixin, UpdateView):
 
 
     def form_valid(self, form):
+        account = Account.objects.get(id=self.kwargs['id'])
         current_object_instance = form.save(commit=False)
         old_object = self.model.objects.get(id=current_object_instance.id)
         if old_object.recurrent:
             if not current_object_instance.recurrent:
-                delete_recurrent_object(self.request.user, old_object, self.model)
+                delete_recurrent_object(self.request.user, old_object, self.model, account)
         form.instance.user = self.request.user
+        form.instance.account = account
         return super().form_valid(form)
 
     def get_queryset(self, *args, **kwargs):
@@ -157,7 +174,7 @@ class IsAuthenticatedMixin(AccessMixin):
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            return redirect('dashboard')
+            return redirect('accounts')
         return super().dispatch(request, *args, **kwargs)
 
 
@@ -165,7 +182,7 @@ class IsSuperuserOrStaffMixin(AccessMixin):
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_superuser or not request.user.is_staff:
-            raise Http404('This page doesn\'t exist')
+            raise Http404()
         return super().dispatch(request, *args, **kwargs)
 
 
@@ -173,5 +190,5 @@ class IsEmailVerifiedMixin(AccessMixin):
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.email_verified:
-            raise Http404('This page doesn\'t exist')
+            raise Http404()
         return super().dispatch(request, *args, **kwargs)
