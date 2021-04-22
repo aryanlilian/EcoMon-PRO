@@ -21,7 +21,7 @@
         <thead>
           <tr>
             <th>Name</th>
-            {% if '/users/incomes/new/' in request.get_full_path or '/users/incomes/update/' in request.get_full_path %}<th>Amount</th>{% endif %}
+            {% if '/users/incomes/new/' in request.get_full_path or '/users/incomes/update/' in request.get_full_path or '/users/archive/' in request.get_full_path %}<th>Amount</th>{% endif %}
             <th>Category</th>
             <th>
                 {% if '/users/incomes/new/' in request.get_full_path or '/users/incomes/update/' in request.get_full_path or request.get_full_path == '/users/archive/' %}
@@ -39,7 +39,7 @@
         <tfoot>
           <tr>
               <th>Name</th>
-            {% if '/users/incomes/new/' in request.get_full_path %}<th>Amount</th>{% endif %}
+            {% if '/users/incomes/new/' in request.get_full_path or '/users/incomes/update/' in request.get_full_path or '/users/archive/' in request.get_full_path %}<th>Amount</th>{% endif %}
             <th>Category</th>
             <th>
                 {% if '/users/incomes/new/' in request.get_full_path or '/users/incomes/update/' in request.get_full_path or request.get_full_path == '/users/archive/' %}
@@ -60,28 +60,13 @@
                   {% for object in incomes %}
                       <div class="row">
                           <tr>
-                              <td class="text-center">{% if request.get_full_path == '/users/accounts/new/' %}<a href="{% url 'dashboard' object.id %}">{{ object.name }}</a>{% else %}{{ object.name }}{% endif %}</td>
-                              {% if '/users/incomes/new/' in request.get_full_path or '/users/incomes/update/' in request.get_full_path %}
-                                  <td class="text-center">{{ object.amount }}</td>
-                              {% endif %}
+                              <td class="text-center">{{ object.name }}</td>
+                              <td class="text-center">{{ object.amount }}</td>
                               <td class="text-center">{{ object.category }}</td>
                               <td class="text-center">
-                                  {% if '/users/incomes/new/' in request.get_full_path or '/users/incomes/update/' in request.get_full_path or request.get_full_path == '/users/archive/' %}
-                                      {% if object.recurrent == True %}Yes{% else %}No{% endif %}
-                                  {% else %}
-                                      {{ object.currency }}
-                                  {% endif %}
+                                  {% if object.recurrent == True %}Yes{% else %}No{% endif %}
                               </td>
                               <td class="text-center">{{ object.created_date|date:"F-d-Y" }}</td>
-                              {% if '/users/incomes/new/' in request.get_full_path or request.get_full_path == '/users/accounts/new/' %}
-                                  <td class="text-center">
-                                      <a class="btn-circle bnt-sm btn-danger" data-toggle="modal" href="{% if request.get_full_path == '/users/accounts/new/' %}objectDeleteModal{{ object.id }}{% else %}objectDeleteModal{{ title }}{{ object.id }}{% endif %}" data-target="{% if request.get_full_path == '/users/accounts/new/' %}objectDeleteModal{{ object.id }}{% else %}objectDeleteModal{{ title }}{{ object.id }}{% endif %}">
-                                          <i class="fas fa-trash"></i>
-                                      </a>
-                                      <a class="btn-circle bnt-sm btn-success ml-2" href="{{ object.update_url }}"><i class="fas fa-pen"></i></a>
-                                  </td>
-                                  {% include 'users/components/delete-object-modal.html' %}
-                              {% endif %}
                           </tr>
                       </div>
                     {% endfor %}
