@@ -15,6 +15,7 @@
 		{% endif %}
 	</h6>
   </div>
+
   <div class="card-body">
     <div class="table-responsive">
       <table class="table table-bordered" id="incomesAndAccountsDataTable" width="100%" cellspacing="0">
@@ -86,7 +87,6 @@
                                   </a>
                                   <a class="btn-circle bnt-sm btn-success ml-2" href="{{ objects.update_url }}"><i class="fas fa-pen"></i></a>
                               </td>
-                              {% include 'users/components/delete-object-modal.html' %}
                           </tr>
                       </div>
                   {% endif %}
@@ -109,12 +109,14 @@
                               <td class="text-center">{{ object.created_date|date:"F-d-Y" }}</td>
                               {% if '/users/incomes/new/' in request.get_full_path or request.get_full_path == '/users/accounts/new/' %}
                                   <td class="text-center">
-                                      <a class="btn-circle bnt-sm btn-danger" data-toggle="modal" href="{% if request.get_full_path == '/users/accounts/new/' %}objectDeleteModal{{ object.id }}{% else %}objectDeleteModal{{ title }}{{ object.id }}{% endif %}" data-target="{% if request.get_full_path == '/users/accounts/new/' %}objectDeleteModal{{ object.id }}{% else %}objectDeleteModal{{ title }}{{ object.id }}{% endif %}">
+                                      <a class="btn-circle bnt-sm btn-danger" href="" data-toggle="modal" data-target="#objectDeleteModal{{ title }}{{ object.id }}">
                                           <i class="fas fa-trash"></i>
                                       </a>
                                       <a class="btn-circle bnt-sm btn-success ml-2" href="{{ object.update_url }}"><i class="fas fa-pen"></i></a>
+
+                                      {% include 'users/components/delete-object-modal.html' %}
                                   </td>
-                                  {% include 'users/components/delete-object-modal.html' %}
+
                               {% endif %}
                           </tr>
                       </div>

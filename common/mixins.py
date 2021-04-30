@@ -8,6 +8,7 @@ from six import text_type
 from threading import Thread
 from users.models import Profile, Account
 from django.http import Http404
+from django.urls import reverse
 from .utils import (
     assembly, percentages_of_incomes, days_of_month,
     daily_avg, max_amount, check_recurrent_or_new,
@@ -142,12 +143,20 @@ class ObjectUpdateViewMixin(LoginRequiredMixin, UpdateView):
 
 class ObjectDeleteViewMixin(LoginRequiredMixin, DeleteView):
     model = None
-    template_name = 'users/incomes_&_spendings.html'
+    template_name = 'users/create-update-list-objects.html'
+    object_url = None
     success_url = None
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
     def post(self, request, *args, **kwargs):
+        account_id = kwargs['id']
+        account = Account.objects.get(id=account_id)
+        self.success_url = reverse(self.object_url, kwargs={'pk' : account_id})
         if request.POST.get('deleteNextRecurrentObject', False):
-            delete_recurrent_object(request.user, self.get_object(), self.model)
+            delete_recurrent_object(request.user, self.get_object(), self.model, account)
         return super().post(request, *args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):

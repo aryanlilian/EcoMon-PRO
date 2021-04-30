@@ -4,7 +4,8 @@ from .views import (
     ProfileView, IncomesCreateListView, SpendingsCreateListView,
     AccountCreateView, IncomeUpdateView, SpendingUpdateView,
     AccountUpdateView, IncomeDeleteView, SpendingDeleteView,
-    ArchiveView, EmailVerificationView, SendOrVerifyEmailVerificationView
+    AccountDeleteView, ArchiveView, EmailVerificationView,
+    SendOrVerifyEmailVerificationView
 )
 from .helpers import (
     chart_area, total_chart_area, chart_pie,
@@ -30,8 +31,9 @@ urlpatterns = [
     path('incomes/update/<int:pk>/account/<int:id>/', IncomeUpdateView.as_view(), name='update-income'),
     path('spendings/update/<int:pk>/account/<int:id>/', SpendingUpdateView.as_view(), name='update-spending'),
     path('accounts/update/<int:pk>/', AccountUpdateView.as_view(), name='update-account'),
-    path('incomes/delete/<int:pk>/', IncomeDeleteView.as_view(), name='delete-income'),
-    path('spendings/delete/<int:pk>/', SpendingDeleteView.as_view(), name='delete-spending'),
+    path('incomes/delete/<int:pk>/account/<int:id>/', IncomeDeleteView.as_view(), name='delete-income'),
+    path('spendings/delete/<int:pk>/account/<int:id>/', SpendingDeleteView.as_view(), name='delete-spending'),
+    path('accounts/delete/<int:pk>/', AccountDeleteView.as_view(), name='delete-account'),
     path('archive/', ArchiveView.as_view(), name='archive'),
     path('verification/', EmailVerificationView.as_view(), name='email-verification'),
     path('send/verification/<uidb64>/<token>/', SendOrVerifyEmailVerificationView.as_view(), name='send-or-verify-email-verification'),

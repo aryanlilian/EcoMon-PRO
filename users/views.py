@@ -191,6 +191,16 @@ class AccountCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
+class IncomeUpdateView(ObjectUpdateViewMixin):
+    model = Income
+    model_name = template_titles['incomes_title']
+
+
+class SpendingUpdateView(ObjectUpdateViewMixin):
+    model = Spending
+    model_name = template_titles['spendings_title']
+
+
 class AccountUpdateView(LoginRequiredMixin, UpdateView):
     model = Account
     template_name = 'users/create-update-list-objects.html'
@@ -205,24 +215,25 @@ class AccountUpdateView(LoginRequiredMixin, UpdateView):
         return super().get_queryset(*args, **kwargs).filter(user=self.request.user)
 
 
-class IncomeUpdateView(ObjectUpdateViewMixin):
-    model = Income
-    model_name = template_titles['incomes_title']
-
-
-class SpendingUpdateView(ObjectUpdateViewMixin):
-    model = Spending
-    model_name = template_titles['spendings_title']
-
-
 class IncomeDeleteView(ObjectDeleteViewMixin):
     model = Income
-    success_url = reverse_lazy('incomes')
+    model_name = 'Incomes'
+    object_url = 'incomes'
 
 
 class SpendingDeleteView(ObjectDeleteViewMixin):
     model = Spending
-    success_url = reverse_lazy('spendings')
+    model_name = 'Spendings'
+    object_url = 'spendings'
+
+
+class AccountDeleteView(LoginRequiredMixin, DeleteView):
+    model = Account
+    template_name = 'users/create-update-list-objects.html'
+    success_url = reverse_lazy('add-accounts')
+
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset(*args, **kwargs).filter(user=self.request.user)
 
 
 class ArchiveView(LoginRequiredMixin, View):

@@ -1,32 +1,31 @@
-<div class="modal fade" id="{% if request.get_full_path == '/users/accounts/new/' %}objectDeleteModal{{ object.id }}{% else %}objectDeleteModal{{ title }}{{ object.id }}{% endif %}" tabindex="-1" aria-labelledby="exampleModalLabel"
-  aria-hidden="true">
-  <div class="modal-dialog" role="document">
-      <div class="modal-content">
-          <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Delete "{{ object.name }}"?</h5>
-              <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">×</span>
-              </button>
-          </div>
-          <div class="modal-body">
-              {% if object.recurrent %}
-                Select "Delete" if you want to delete "{{ object.name }}", the {{ title|slice:':-1'|lower }} you're trying to delete is recurrent, you don't want to have it at all?
-                if you select "Yes" below, the next month this {{ title|slice:':-1'|lower }} it wouldn't automatically appear in your profile!
-              {% else %}
-                Select "Delete" if you want to delete "{{ object.name }}"
-              {% endif %}
-          </div>
-          <div class="modal-footer">
-              <form method="POST" action="{{ object.delete_url }}">
-                  {% csrf_token %}
-                  {% if object.recurrent %}
-                    <label for="deleteRecurrentObject">Yes, Delete next month {{ title|slice:':-1'|lower }}</label>
-                    <input type="checkbox" name="deleteNextRecurrentObject" class="mr-3" id="deleteRecurrentObject">
-                  {% endif %}
-                  <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                  <button type="submit" name="delete" class="btn btn-danger">Delete</button>
-              </form>
-          </div>
-      </div>
-  </div>
+<div class="modal fade" id="objectDeleteModal{{ title }}{{ object.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Delete "{{object.name}}"?</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                {% if object.recurrent %}
+                Select "Delete" if you want to delete "{{object.name}}", the {{title|slice:':-1'|lower}} you're trying to delete is recurrent, you don't want to have it at all? if you select "Yes" below, the next month this {{title|slice:':-1'|lower}} wouldn't automatically appear in your account!
+                {% else %}
+                Select "Delete" if you want to delete "{{object.name}}"
+                {% endif %}
+            </div>
+            <div class="modal-footer">
+                <form method="POST" action="{{ object.delete_url }}">
+                    {% csrf_token %}
+                    {% if object.recurrent %}
+                        <label for="deleteRecurrentObject">Yes, delete next month {{ title|slice:':-1'|lower }}</label>
+                        <input type="checkbox" name="deleteNextRecurrentObject" class="mr-3" id="deleteRecurrentObject">
+                    {% endif %}
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <button type="submit" name="delete" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
