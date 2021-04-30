@@ -1,9 +1,9 @@
-<div class="modal fade" id="objectDeleteModal{{ title }}{{ object.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+<div class="modal fade" id="{% if request.get_full_path == '/users/accounts/new/' and not user.pro_membership %}objectDeleteModal{{ objects.id }}{% else %}objectDeleteModal{{ title }}{{ object.id }}{% endif %}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
     aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Delete "{{object.name}}"?</h5>
+                <h5 class="modal-title" id="exampleModalLabel">{% if request.get_full_path == '/users/accounts/new/' and not user.pro_membership %}Delete "{{objects.name}}{% else %}Delete "{{object.name}}{% endif %}"?</h5>
                 <button class="close" type="button" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">×</span>
                 </button>
@@ -12,11 +12,15 @@
                 {% if object.recurrent %}
                 Select "Delete" if you want to delete "{{object.name}}", the {{title|slice:':-1'|lower}} you're trying to delete is recurrent, you don't want to have it at all? if you select "Yes" below, the next month this {{title|slice:':-1'|lower}} wouldn't automatically appear in your account!
                 {% else %}
-                Select "Delete" if you want to delete "{{object.name}}"
+                    {% if request.get_full_path == '/users/accounts/new/' and not user.pro_membership %}
+                        Select "Delete" if you want to delete "{{objects.name}}"
+                    {% else %}
+                        Select "Delete" if you want to delete "{{object.name}}"
+                    {% endif %}
                 {% endif %}
             </div>
             <div class="modal-footer">
-                <form method="POST" action="{{ object.delete_url }}">
+                <form method="POST" action="{% if request.get_full_path == '/users/accounts/new/' and not user.pro_membership %}{{ objects.delete_url }}{% else %}{{ object.delete_url }}{% endif %}">
                     {% csrf_token %}
                     {% if object.recurrent %}
                         <label for="deleteRecurrentObject">Yes, delete next month {{ title|slice:':-1'|lower }}</label>

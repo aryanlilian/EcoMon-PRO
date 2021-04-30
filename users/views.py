@@ -276,12 +276,21 @@ class ArchiveView(LoginRequiredMixin, View):
         return render(request, self.template_name, context)
 
     def get_context_data(self, **kwargs):
+        no_currency = None
         self.accounts = Account.objects.filter(user=self.request.user) if self.request.user.pro_membership else None
         self.account = Account.objects.filter(user=self.request.user).first() if not self.request.user.pro_membership else Account.objects.filter(user=self.request.user)
         self.incomes = Income.objects.filter(user=self.request.user) if self.request.user.pro_membership else Income.objects.filter(user=self.request.user, account=self.account)
         self.spendings = Spending.objects.filter(user=self.request.user) if self.request.user.pro_membership else Spending.objects.filter(user=self.request.user, account=self.account)
+
+        try:
+            currency = Profile.objects.get(user=self.request.user).currency if self.accounts else self.account.currency
+        except:
+            currency = None
+            no_currency = True
+
         context = {
-            'currency': Profile.objects.get(user=self.request.user).currency if self.accounts else self.account.currency,
+            'currency': currency,
+            'no_currency' : no_currency,
             'title' : template_titles['archive_title'],
             'accounts' : self.accounts,
             'incomes' : self.incomes,

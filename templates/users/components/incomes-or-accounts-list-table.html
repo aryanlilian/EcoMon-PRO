@@ -82,10 +82,12 @@
                               <td class="text-center">{{ objects.currency }}</td>
                               <td class="text-center">{{ objects.created_date|date:"F-d-Y" }}</td>
                               <td class="text-center">
-                                  <a class="btn-circle bnt-sm btn-danger" data-toggle="modal" href="objectDeleteModal{{ objects.id }}" data-target="objectsDeleteModal{{ objects.id }}">
+                                  <a class="btn-circle bnt-sm btn-danger" href="" data-toggle="modal" data-target="#objectDeleteModal{{ objects.id }}">
                                       <i class="fas fa-trash"></i>
                                   </a>
                                   <a class="btn-circle bnt-sm btn-success ml-2" href="{{ objects.update_url }}"><i class="fas fa-pen"></i></a>
+
+                                  {% include 'users/components/delete-object-modal.html' %}
                               </td>
                           </tr>
                       </div>
