@@ -12,6 +12,7 @@ from .views import (
     PrivacyPolicyTemplateView,
 )
 
+
 urlpatterns = [
     path('', IndexFormView.as_view(), name='index'),
     path('about/', AboutTemplateView.as_view(), name='about'),

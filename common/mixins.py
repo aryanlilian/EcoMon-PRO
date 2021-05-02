@@ -40,6 +40,7 @@ class ObjectCreateListViewMixin(CreateView):
             created_date__month=date.month
         )
         currency = account.currency
+
         if date.month == 1:
             obj_last_month = self.model.objects.filter(
                 user=self.request.user,
@@ -54,9 +55,11 @@ class ObjectCreateListViewMixin(CreateView):
                 created_date__year=date.year,
                 created_date__month=date.month - 1
             )
+
         total_obj = assembly(obj)
         total_obj_last_month = assembly(obj_last_month)
         check_recurrent_or_new(self.request.user, recurrent_obj, self.model, account)
+
         context['title'] = self.model_name
         context['color'] = self.color
         context['account'] = account
@@ -98,6 +101,7 @@ class ObjectUpdateViewMixin(LoginRequiredMixin, UpdateView):
             created_date__month=date.month
         )
         currency = account.currency
+
         if date.month == 1:
             obj_last_month = self.model.objects.filter(
                 user=self.request.user,
@@ -112,9 +116,11 @@ class ObjectUpdateViewMixin(LoginRequiredMixin, UpdateView):
                 created_date__year=date.year,
                 created_date__month=date.month - 1
             )
+
         total_obj = assembly(obj)
         total_obj_last_month = assembly(obj_last_month)
         check_recurrent_or_new(self.request.user, recurrent_objs, self.model, account)
+
         context['title'] = self.model_name
         context['color'] = 'success'
         context['account'] = account
@@ -130,9 +136,11 @@ class ObjectUpdateViewMixin(LoginRequiredMixin, UpdateView):
         account = Account.objects.get(id=self.kwargs['id'])
         current_object_instance = form.save(commit=False)
         old_object = self.model.objects.get(id=current_object_instance.id)
+
         if old_object.recurrent:
             if not current_object_instance.recurrent:
                 delete_recurrent_object(self.request.user, old_object, self.model, account)
+
         form.instance.user = self.request.user
         form.instance.account = account
         return super().form_valid(form)
@@ -155,6 +163,7 @@ class ObjectDeleteViewMixin(LoginRequiredMixin, DeleteView):
         account_id = kwargs['id']
         account = Account.objects.get(id=account_id)
         self.success_url = reverse(self.object_url, kwargs={'pk' : account_id})
+
         if request.POST.get('deleteNextRecurrentObject', False):
             delete_recurrent_object(request.user, self.get_object(), self.model, account)
         return super().post(request, *args, **kwargs)

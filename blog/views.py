@@ -32,14 +32,17 @@ class BlogListView(ListView):
         self.object_list = self.get_queryset()
         context = self.get_context_data(**kwargs)
         email = request.POST.get('newsletter_email')
+
         if Newsletter.objects.filter(email=email).exists():
             messages.warning(request, messages_text['email_exists'])
         else:
             fin, newsletter_email_content = open('common/emails/newsletter_welcome.txt', 'rt'), ''
             unsubsribe_url = uidb_token_generator('unsubsribe', request, email)
+
             for line in fin:
                 newsletter_email_content += line.replace('user_email', email)
             newsletter_email_content += '\n' + unsubsribe_url
+
             try:
                 subject = newsletter_texts['subject']
                 send_mail(
@@ -78,14 +81,17 @@ class TaggedPostListView(BlogListView):
         self.object_list = self.get_queryset()
         context = self.get_context_data(**kwargs)
         email = request.POST.get('newsletter_email')
+
         if Newsletter.objects.filter(email=email).exists():
             messages.warning(request, messages_text['email_exists'])
         else:
             fin, newsletter_email_content = open('common/emails/newsletter_welcome.txt', 'rt'), ''
             unsubsribe_url = uidb_token_generator('unsubsribe', request, email)
+
             for line in fin:
                 newsletter_email_content += line.replace('user_email', email)
             newsletter_email_content += '\n' + unsubsribe_url
+
             try:
                 subject = newsletter_texts['subject']
                 send_mail(
@@ -119,6 +125,7 @@ class PostDetailView(View):
     def post(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
         content, replied_comment = request.POST.get('commentContent'), None
+
         if content:
             comment_id = request.POST.get('commentId')
             post = Post.objects.get(slug=kwargs['slug'])
@@ -135,6 +142,7 @@ class PostDetailView(View):
     def get_context_data(self, **kwargs):
         context = {}
         post = Post.objects.get(slug=kwargs['slug'])
+
         try:
             context['previous_post'] = Post.objects.get(id=post.id - 1)
         except:
@@ -143,6 +151,7 @@ class PostDetailView(View):
             context['next_post'] = Post.objects.get(id=post.id + 1)
         except:
             context['next_post_none'] = template_titles['no_next_post']
+
         context['banner_page_title'] = post.title
         context['title'] = template_titles['post_title']
         context['page_location'] = template_titles['post_path']

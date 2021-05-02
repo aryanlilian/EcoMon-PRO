@@ -68,6 +68,7 @@ class TotalAccountDashboardView(LoginRequiredMixin, TotalAccountDashboardMixin, 
         savings_percent = percentages_of_incomes(total_incomes, total_savings)
         max_income = max_currency_converter(request.user, Income, accounts, currency, date.year, date.month)
         max_spending = max_currency_converter(request.user, Spending, accounts, currency, date.year, date.month)
+
         context = {
             'title': template_titles['dashboard_title'],
             'currency': currency,
@@ -100,6 +101,7 @@ class DashboardView(LoginRequiredMixin, View):
         spendings_percent = percentages_of_incomes(total_incomes, total_spendings)
         savings_percent = percentages_of_incomes(total_incomes, total_savings)
         max_income, max_spending = max_amount(incomes), max_amount(spendings)
+
         context = {
             'title': template_titles['dashboard_title'],
             'account' : account,
@@ -134,6 +136,7 @@ class ProfileView(LoginRequiredMixin, View):
             request.POST, request.FILES,
             instance=request.user.profile
         )
+
         if user_update_form.is_valid() and profile_update_form.is_valid():
             user_update_form.save()
             profile_update_form.save()
@@ -142,6 +145,7 @@ class ProfileView(LoginRequiredMixin, View):
                 messages_text['profile_updated']
             )
             return redirect('profile')
+
         context['user_update_form'] = user_update_form
         context['profile_update_form'] = profile_update_form
         return render(request, self.template_name, context)
@@ -153,6 +157,7 @@ class ProfileView(LoginRequiredMixin, View):
         profile_update_form = ProfileUpdateForm(
             instance = self.request.user.profile
         )
+
         context = {
             'title' : template_titles['profile_title'],
             'user_update_form' : user_update_form,
@@ -243,11 +248,13 @@ class ArchiveView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
         total_incomes = total_spendings = None
+
         if request.user.pro_membership:
             total_incomes = total_currency_converter(request.user, Income, self.accounts, context['currency'])
             total_spendings = total_currency_converter(request.user, Spending, self.accounts, context['currency'])
         else:
             total_incomes, total_spendings = assembly(self.incomes), assembly(self.spendings)
+
         context['total_incomes'] = total_incomes
         context['total_spendings'] = total_spendings
         context['total_savings'] = round(total_incomes - total_spendings, 2)
@@ -255,9 +262,9 @@ class ArchiveView(LoginRequiredMixin, View):
 
     def post(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
-        self.account = Account.objects.get(id=request.POST.get('accountId')) if request.user.pro_membership else Account.objects.filter(user=request.user).first()
         year = datetime.strptime(request.POST.get('year'), '%Y')
         month = datetime.strptime(request.POST.get('month'), '%m')
+        self.account = Account.objects.get(id=request.POST.get('accountId')) if request.user.pro_membership else Account.objects.filter(user=request.user).first()
         self.incomes = Income.objects.filter(
             user=request.user, account=self.account, created_date__year=year.year, created_date__month=month.month
         )
@@ -265,6 +272,7 @@ class ArchiveView(LoginRequiredMixin, View):
             user=request.user, account=self.account, created_date__year=year.year, created_date__month=month.month
         )
         total_incomes, total_spendings = assembly(self.incomes), assembly(self.spendings)
+
         context['currency'] = self.account.currency
         context['incomes'] = self.incomes
         context['spendings'] = self.spendings
@@ -305,8 +313,10 @@ class EmailVerificationView(LoginRequiredMixin, IsEmailVerifiedMixin, View):
         fin, body = open('common/emails/email_opt_verification.txt', 'rt'), ''
         activate_url = uidb_token_generator('send-or-verify-email-verification', request)
         subject = email_activation['subject']
+
         for line in fin:
             body += line.replace('username', request.user.username)
+
         body += '\n' + activate_url
         to_email = request.user.email
         email = EmailMessage(

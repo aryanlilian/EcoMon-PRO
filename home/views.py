@@ -24,14 +24,18 @@ class IndexFormView(IsAuthenticatedMixin, View):
 
     def post(self, request, *args, **kwargs):
         email = request.POST.get('newsletter_email')
+
         if Newsletter.objects.filter(email=email).exists():
             messages.warning(request, messages_text['email_exists'])
         else:
             fin, newsletter_email_content = open('common/emails/newsletter_welcome.txt', 'rt'), ''
             unsubsribe_url = uidb_token_generator('unsubsribe', request, email)
+
             for line in fin:
                 newsletter_email_content += line.replace('user_email', email)
+
             newsletter_email_content += '\n' + unsubsribe_url
+
             try:
                 subject = newsletter_texts['subject']
                 send_mail(
@@ -55,14 +59,17 @@ class AboutTemplateView(IsAuthenticatedMixin, TemplateView):
     def post(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
         email = request.POST.get('newsletter_email')
+
         if Newsletter.objects.filter(email=email).exists():
             messages.warning(request, messages_text['email_exists'])
         else:
             fin, newsletter_email_content = open('common/emails/newsletter_welcome.txt', 'rt'), ''
             unsubsribe_url = uidb_token_generator('unsubsribe', request, email)
+
             for line in fin:
                 newsletter_email_content += line.replace('user_email', email)
             newsletter_email_content += '\n' + unsubsribe_url
+
             try:
                 subject = newsletter_texts['subject']
                 send_mail(
@@ -101,14 +108,17 @@ class ContactView(View):
         from_email = request.POST.get('email')
         success_message, error_message = None, None
         email = request.POST.get('newsletter_email')
+
         if Newsletter.objects.filter(email=email).exists():
             messages.warning(request, messages_text['email_exists'])
         elif not subject and not message and not from_email:
             fin, newsletter_email_content = open('common/emails/newsletter_welcome.txt', 'rt'), ''
             unsubsribe_url = uidb_token_generator('unsubsribe', request, email)
+
             for line in fin:
                 newsletter_email_content += line.replace('user_email', email)
             newsletter_email_content += '\n' + unsubsribe_url
+
             try:
                 subject = newsletter_texts['subject']
                 send_mail(
@@ -135,6 +145,7 @@ class ContactView(View):
                 success_message = messages_text['email_received']
             except:
                 error_message = messages_text['fail_sent_email']
+
         context['success_message'] = success_message
         context['error_message'] = error_message
         return render(request, self.template_name, context)

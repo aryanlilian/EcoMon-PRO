@@ -12,6 +12,7 @@ from .helpers import (
     total_chart_pie
 )
 
+
 urlpatterns = [
     path('accounts/', AccountsListView.as_view(), name='accounts'),
     path('dashboard/', TotalAccountDashboardView.as_view(), name='dashboard-total-account'),

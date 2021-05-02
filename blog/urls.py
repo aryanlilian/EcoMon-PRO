@@ -5,6 +5,7 @@ from .views import (
     CommentUpdateView, CommentDeleteView,
 )
 
+
 urlpatterns = [
     path('', BlogListView.as_view(), name='blog'),
     path('post/tag/<slug:slug>/', TaggedPostListView.as_view(), name='tag'),
